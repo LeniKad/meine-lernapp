@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernapp</title>
+    
+    <!-- PWA Manifest & Icons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="theme-color" content="#4F46E5">
+    <!-- Google Fonts for friendly typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Subject Selection Screen -->
+        <section id="screen-subjects" class="screen active">
+            <header>
+                <h1>LernApp</h1>
+                <p>Was möchtest du heute üben?</p>
+            </header>
+            <main>
+                <div class="grid-container">
+                    <div class="package-card" onclick="openSubject('deutsch')">
+                        <div class="pack-level">Klasse 3</div>
+                        <div class="pack-title">📚 Deutsch</div>
+                        <div class="pack-preview">Blitzlesen, W-Wörter...</div>
+                    </div>
+                    <div class="package-card" onclick="openSubject('mathe')">
+                        <div class="pack-level">Klasse 3</div>
+                        <div class="pack-title">🔢 Mathe</div>
+                        <div class="pack-preview">Das kleine 1x1...</div>
+                    </div>
+                    <div class="package-card" onclick="alert('Englisch kommt bald!')" style="opacity: 0.7;">
+                        <div class="pack-level">Demnächst</div>
+                        <div class="pack-title">🌍 Englisch</div>
+                        <div class="pack-preview">Vokabeln...</div>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- Start Screen (Level Selection) -->
+        <section id="screen-start" class="screen">
+            <header style="position: relative;">
+                <button class="btn-secondary" onclick="showScreen('subjects')" style="position: absolute; left: 0; top: 0; padding: 8px 16px; font-size: 1rem;">Zurück</button>
+                <h1 id="subject-header-title">🚀 Blitzlesen</h1>
+                <p id="subject-header-desc">Trainiere deinen Sichtwortschatz!</p>
+            </header>
+            <main>
+                <div id="global-input-mode-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; background: #FFFBEB; padding: 16px; border-radius: 12px; border: 2px solid #F59E0B;">
+                    <strong style="color: #B45309; font-size: 1.1rem; text-align: center;">Steuerung: Wie übt ihr?</strong>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-top: 8px;">
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <input type="radio" name="input-mode" value="mic" checked style="width: 20px; height: 20px; accent-color: #F59E0B;">
+                            🎙️ Spracherkennung
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <input type="radio" name="input-mode" value="manual" style="width: 20px; height: 20px; accent-color: #F59E0B;">
+                            🖐️ Manuell (Button)
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700;">
+                            <input type="radio" name="input-mode" value="keyboard" style="width: 20px; height: 20px; accent-color: #F59E0B;">
+                            ⌨️ Eingabe
+                        </label>
+                    </div>
+                </div>
+                <div id="math-options-container" style="display: none; flex-direction: column; gap: 12px; margin-bottom: 24px; background: #EEF2FF; padding: 16px; border-radius: 12px; border: 2px solid var(--primary);">
+                    <label style="font-size: 1.1rem; font-weight: 800; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 12px;">
+                        <input type="checkbox" id="math-learn-toggle" style="width: 24px; height: 24px; accent-color: var(--primary);">
+                        💡 Lern-Modus (Ergebnis sofort anzeigen)
+                    </label>
+                    <hr style="border: 0; height: 1px; background: #C7D2FE; margin: 4px 0;">
+                    <label style="font-size: 1.1rem; font-weight: 800; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 12px;">
+                        <input type="checkbox" id="math-mix-toggle" style="width: 24px; height: 24px; accent-color: var(--primary);">
+                        🔀 Zahlen innerhalb der Reihe mischen
+                    </label>
+                </div>
+
+                <div id="packages-container" class="grid-container">
+                    <!-- Cards will be injected by JavaScript -->
+                </div>
+            </main>
+        </section>
+
+        <!-- Training Session Screen -->
+        <section id="screen-training" class="screen">
+            <button id="btn-cancel" class="btn-secondary" aria-label="Abbrechen">Zurück</button>
+            <div class="word-display-container" style="flex-direction: column;">
+                <h2 id="current-word">Laden...</h2>
+                <div id="math-visualization" style="margin-top: 16px; display: none; gap: 8px; flex-direction: column; align-items: center;"></div>
+            </div>
+            
+            <div>
+                <div id="mic-indicator-area" class="status-indicator">
+                    <span id="mic-status" class="mic-icon">🎙️ Hör zu...</span>
+                </div>
+                
+                <div id="manual-btn-area" style="text-align: center; margin-bottom: 24px; display: none;">
+                    <button id="btn-next-manual" class="btn-primary" style="font-size: 1.5rem; padding: 16px 64px; border-radius: 99px; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4); width: 100%; max-width: 300px;">Weiter ➔</button>
+                </div>
+
+                <div id="keyboard-input-area" style="text-align: center; margin-bottom: 24px; display: none;">
+                    <form id="math-answer-form">
+                        <input type="text" inputmode="numeric" pattern="[0-9]*" id="math-answer-input" enterkeyhint="done" placeholder="?" style="font-size: 3rem; padding: 16px; border-radius: 20px; border: 4px solid var(--primary); width: 100%; max-width: 200px; text-align: center; font-family: 'Nunito', sans-serif; font-weight: 900; color: var(--primary); outline: none; box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.2);">
+                        <button type="submit" style="display: none;"></button>
+                    </form>
+                </div>
+
+                <div class="progress-bar-container" style="width: 100%; max-width: 400px; margin: 0 auto 16px auto;">
+                    <div id="progress-bar"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Result Screen -->
+        <section id="screen-result" class="screen">
+            <header>
+                <h1>Klasse gemacht! 🎉</h1>
+            </header>
+            <main class="result-details">
+                <div class="stat-card">
+                    <h3>Deine Zeit</h3>
+                    <p id="res-time" class="stat-value">-- s</p>
+                </div>
+                <div id="res-spb-card" class="stat-card highlight">
+                    <h3>Sekunden pro Buchstabe</h3>
+                    <p id="res-spb" class="stat-value">--</p>
+                </div>
+                
+                <div id="feedback-message" class="feedback-msg hidden"></div>
+
+                <div class="actions">
+                    <button id="btn-restart-level" class="btn-primary">Nochmal spielen</button>
+                    <button id="btn-back-home" class="btn-secondary">Andere Liste wählen</button>
+                </div>
+            </main>
+        </section>
+    </div>
+
+    <!-- Canvas Confetti Library via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- Service Worker Registration for PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch(err => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
+</body>
+</html>
