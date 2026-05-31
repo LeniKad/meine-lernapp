@@ -107,7 +107,7 @@
                 <div id="keyboard-input-area" style="text-align: center; margin-bottom: 24px; display: none;">
                     <form id="math-answer-form">
                         <input type="text" inputmode="numeric" pattern="[0-9]*" id="math-answer-input" enterkeyhint="done" placeholder="?" style="font-size: 3rem; padding: 16px; border-radius: 20px; border: 4px solid var(--primary); width: 100%; max-width: 200px; text-align: center; font-family: 'Nunito', sans-serif; font-weight: 900; color: var(--primary); outline: none; box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.2);">
-                        <button type="submit" style="display: none;"></button>
+                        <button type="submit" style="position: absolute; opacity: 0; width: 1px; height: 1px;"></button>
                     </form>
                 </div>
 
@@ -133,6 +133,13 @@
                 </div>
                 
                 <div id="feedback-message" class="feedback-msg hidden"></div>
+
+                <div id="failed-tasks-container" class="stat-card" style="display: none; border-color: #EF4444; background: #FEF2F2;">
+                    <h3 style="color: #991B1B;">Das üben wir nochmal:</h3>
+                    <ul id="failed-tasks-list" style="list-style: none; padding: 0; margin-top: 12px; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">
+                        <!-- Injected via JS -->
+                    </ul>
+                </div>
 
                 <div class="actions">
                     <button id="btn-restart-level" class="btn-primary">Nochmal spielen</button>

@@ -12,6 +12,8 @@ const wordPackages = [
     { id: 'paket10', level: 'Profi 2', title: 'Paket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
     { id: 'paket11', level: 'Profi 3', title: 'Paket 11', words: ['deshalb', 'trotzdem', 'nachdem', 'bevor', 'darum', 'davor', 'danach', 'dabei', 'wieso', 'warum'] },
     { id: 'paket12', level: 'Spezial', title: 'Paket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'warum', 'wieso', 'weshalb', 'wohin', 'woher'] },
+    { id: 'paket_abc_gross', level: 'ABC', title: 'Großbuchstaben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
+    { id: 'paket_abc_klein', level: 'abc', title: 'Kleinbuchstaben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] }
 ];
 
 function generateMathPackages() {
@@ -71,6 +73,37 @@ function generateMathPackages() {
         { q: "11 - 2 = ", a: "9" }
     ];
     packages.push({ id: `mathe_z_minus`, level: 'Zehner', title: `Übergang (-)`, items: zehnerMinusItems });
+
+    // 20er Übergang Plus
+    let zwanzigerPlusItems = [
+        { q: "18 + 5 = ", a: "23" },
+        { q: "17 + 4 = ", a: "21" },
+        { q: "19 + 6 = ", a: "25" },
+        { q: "16 + 5 = ", a: "21" },
+        { q: "18 + 3 = ", a: "21" },
+        { q: "17 + 6 = ", a: "23" },
+        { q: "19 + 4 = ", a: "23" },
+        { q: "15 + 7 = ", a: "22" },
+        { q: "18 + 7 = ", a: "25" },
+        { q: "19 + 2 = ", a: "21" }
+    ];
+    packages.push({ id: `mathe_z20_plus`, level: 'Zwanziger', title: `Übergang (+)`, items: zwanzigerPlusItems });
+
+    // 20er Übergang Minus
+    let zwanzigerMinusItems = [
+        { q: "23 - 5 = ", a: "18" },
+        { q: "21 - 4 = ", a: "17" },
+        { q: "25 - 6 = ", a: "19" },
+        { q: "21 - 5 = ", a: "16" },
+        { q: "22 - 3 = ", a: "19" },
+        { q: "23 - 6 = ", a: "17" },
+        { q: "24 - 9 = ", a: "15" },
+        { q: "22 - 7 = ", a: "15" },
+        { q: "25 - 7 = ", a: "18" },
+        { q: "21 - 2 = ", a: "19" }
+    ];
+    packages.push({ id: `mathe_z20_minus`, level: 'Zwanziger', title: `Übergang (-)`, items: zwanzigerMinusItems });
+
     return packages;
 }
 const mathPackages = generateMathPackages();
@@ -83,6 +116,8 @@ let startTime = 0;
 let recognition = null;
 let isTrainingActive = false;
 let currentInputMode = 'mic';
+let currentAttempts = 0;
+let failedTasks = [];
 
 // --- DOM Elements ---
 const screens = {
@@ -120,11 +155,13 @@ function init() {
     
     if (mathAnswerInput) {
         mathAnswerInput.addEventListener('input', () => {
-            if (!isTrainingActive || currentInputMode !== 'keyboard') return;
-            let targetNum = currentSubject === 'deutsch' ? currentPackage.words[wordIndex].toLowerCase() : currentPackage.items[wordIndex].a;
-            let currentVal = mathAnswerInput.value.replace(/\s+/g, '').toLowerCase();
-            if (currentVal === targetNum.toString().toLowerCase()) {
-                setTimeout(nextWord, 100);
+            handleAnswerSubmission(false);
+        });
+        
+        mathAnswerInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAnswerSubmission(true);
             }
         });
     }
@@ -133,25 +170,53 @@ function init() {
     if (mathAnswerForm) {
         mathAnswerForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (!isTrainingActive || currentInputMode !== 'keyboard') return;
-            
-            let targetNum = currentSubject === 'deutsch' ? currentPackage.words[wordIndex].toLowerCase() : currentPackage.items[wordIndex].a;
-            let currentVal = mathAnswerInput.value.replace(/\s+/g, '').toLowerCase();
-            
-            if (currentVal === targetNum.toString().toLowerCase()) {
-                nextWord();
-            } else {
-                // Falsche Antwort beim "Entern"
-                mathAnswerInput.style.borderColor = "var(--danger)";
-                mathAnswerInput.style.color = "var(--danger)";
-                setTimeout(() => {
-                    mathAnswerInput.style.borderColor = "var(--primary)";
-                    mathAnswerInput.style.color = "var(--primary)";
-                    mathAnswerInput.value = '';
-                    mathAnswerInput.focus();
-                }, 500);
-            }
+            handleAnswerSubmission(true);
         });
+    }
+}
+
+function handleAnswerSubmission(isExplicitSubmit) {
+    if (!isTrainingActive || currentInputMode !== 'keyboard') return;
+    
+    let targetNum = currentSubject === 'deutsch' ? currentPackage.words[wordIndex] : currentPackage.items[wordIndex].a;
+    let currentVal = mathAnswerInput.value.replace(/\s+/g, '').toLowerCase();
+    
+    if (!currentVal) return;
+
+    if (currentVal === targetNum.toString().toLowerCase()) {
+        // Richtig
+        mathAnswerInput.style.borderColor = "var(--secondary)";
+        mathAnswerInput.style.color = "var(--secondary)";
+        mathAnswerInput.disabled = true;
+        setTimeout(() => {
+            nextWord();
+        }, 400);
+    } else if (isExplicitSubmit) {
+        // Falsch (nur bei Enter werten)
+        currentAttempts++;
+        if (currentAttempts >= 3) {
+            // Nach 3 Versuchen aufgeben
+            failedTasks.push(currentSubject === 'deutsch' ? {q: currentPackage.words[wordIndex], a: currentPackage.words[wordIndex]} : currentPackage.items[wordIndex]);
+            mathAnswerInput.style.borderColor = "#EF4444";
+            mathAnswerInput.style.color = "#EF4444";
+            mathAnswerInput.value = targetNum; // Lösung kurz zeigen
+            mathAnswerInput.disabled = true;
+            setTimeout(() => {
+                nextWord();
+            }, 1500);
+        } else {
+            // Versuch falsch, aber noch Chancen
+            mathAnswerInput.style.borderColor = "#EF4444";
+            mathAnswerInput.style.color = "#EF4444";
+            mathAnswerInput.disabled = true;
+            setTimeout(() => {
+                mathAnswerInput.style.borderColor = "var(--primary)";
+                mathAnswerInput.style.color = "var(--primary)";
+                mathAnswerInput.value = '';
+                mathAnswerInput.disabled = false;
+                mathAnswerInput.focus();
+            }, 500);
+        }
     }
 }
 
@@ -315,6 +380,7 @@ function startTraining(packageId) {
     
     wordIndex = 0;
     isTrainingActive = true;
+    failedTasks = [];
 
     const modeRadios = document.getElementsByName('input-mode');
     for (const radio of modeRadios) {
@@ -405,6 +471,10 @@ function showWord() {
         }, 50);
 
         if (currentInputMode === 'keyboard' && mathAnswerInput) {
+            currentAttempts = 0;
+            mathAnswerInput.disabled = false;
+            mathAnswerInput.style.borderColor = "var(--primary)";
+            mathAnswerInput.style.color = "var(--primary)";
             mathAnswerInput.value = '';
             mathAnswerInput.focus();
         }
@@ -505,6 +575,15 @@ function showResults(currentSeconds, currentSpb) {
             feedbackMsg.textContent = currentSubject === 'deutsch' ? "🎉 Neuer Highscore bei der Lesegeschwindigkeit! Weiter so!" : "🎉 Neue Bestzeit beim Einmaleins! Super gemacht!";
             feedbackMsg.classList.remove('hidden');
         }
+    }
+    
+    const failedContainer = document.getElementById('failed-tasks-container');
+    const failedList = document.getElementById('failed-tasks-list');
+    if (failedTasks.length > 0) {
+        failedList.innerHTML = failedTasks.map(t => `<li>${t.q} <span style="color: var(--secondary)">${t.a}</span></li>`).join('');
+        if (failedContainer) failedContainer.style.display = 'block';
+    } else {
+        if (failedContainer) failedContainer.style.display = 'none';
     }
     
     renderPackages();
