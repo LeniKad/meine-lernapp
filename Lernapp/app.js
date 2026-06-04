@@ -44,6 +44,22 @@ function generateMathPackages() {
         items: profiItems
     });
 
+    // Zehner Ergänzen
+    let ergaenzenItems = [];
+    let possibleTargets = [20, 30, 40, 50, 60, 70, 80, 90, 100];
+    for(let i=0; i<10; i++) {
+        let target = possibleTargets[Math.floor(Math.random() * possibleTargets.length)];
+        let startNum = Math.floor(Math.random() * (target - 1)) + 1;
+        let missing = target - startNum;
+        ergaenzenItems.push({ q: `${startNum} + _ = ${target}`, a: missing.toString() });
+    }
+    packages.push({
+        id: `mathe_ergaenzen`,
+        level: 'Kopfrechnen',
+        title: `Zehner ergänzen`,
+        items: ergaenzenItems
+    });
+
     // Zehnerübergang Plus
     let zehnerPlusItems = [
         { q: "8 + 5 = ", a: "13" },
@@ -361,8 +377,8 @@ function startTraining(packageId) {
             [currentPackage.words[i], currentPackage.words[j]] = [currentPackage.words[j], currentPackage.words[i]];
         }
     } else {
-        // Bei Mathe mischen wir das Profi Paket immer neu, wenn es aufgerufen wird.
-        if(packageId === 'mathe_profi') {
+        // Bei Mathe mischen wir das Profi Paket und Ergänzen immer neu, wenn es aufgerufen wird.
+        if(packageId === 'mathe_profi' || packageId === 'mathe_ergaenzen') {
             const pkgs = generateMathPackages();
             currentPackage = pkgs.find(p => p.id === packageId);
         } else {
