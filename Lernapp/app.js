@@ -143,7 +143,8 @@ const screens = {
     subjects: document.getElementById('screen-subjects'),
     start: document.getElementById('screen-start'),
     training: document.getElementById('screen-training'),
-    result: document.getElementById('screen-result')
+    result: document.getElementById('screen-result'),
+    'vocab-editor': document.getElementById('screen-vocab-editor')
 };
 const packagesContainer = document.getElementById('packages-container');
 const currentWordEl = document.getElementById('current-word');
