@@ -257,13 +257,38 @@ window.openVocabEditor = function() {
     showScreen('vocab-editor');
 }
 
+window.autoTranslate = async function(enInputEl) {
+    const enWord = enInputEl.value.trim();
+    if (!enWord) return;
+    
+    const row = enInputEl.closest('.vocab-row');
+    const deInputEl = row.querySelector('.vocab-de');
+    
+    // Nur übersetzen, wenn das deutsche Feld noch leer ist
+    if (deInputEl.value.trim() !== '') return;
+    
+    const oldPlaceholder = deInputEl.placeholder;
+    deInputEl.placeholder = "Übersetze...";
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(enWord)}&langpair=en|de`);
+        const data = await res.json();
+        if (data && data.responseData && data.responseData.translatedText) {
+            deInputEl.value = data.responseData.translatedText;
+        }
+    } catch(e) {
+        console.error("Translation error", e);
+    } finally {
+        deInputEl.placeholder = oldPlaceholder;
+    }
+}
+
 window.addVocabRow = function(de = '', en = '') {
     const container = document.getElementById('vocab-rows-container');
     const row = document.createElement('div');
     row.className = 'vocab-row';
     row.innerHTML = `
+        <input type="text" class="vocab-input vocab-en" placeholder="Englisch" value="${en}" onblur="autoTranslate(this)">
         <input type="text" class="vocab-input vocab-de" placeholder="Deutsch" value="${de}">
-        <input type="text" class="vocab-input vocab-en" placeholder="Englisch" value="${en}">
         <button class="vocab-delete-btn" onclick="this.parentElement.remove()">🗑️</button>
     `;
     container.appendChild(row);
