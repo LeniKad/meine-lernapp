@@ -342,3 +342,64 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+/* Vocab Editor Styles */
+.vocab-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.vocab-input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    font-size: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    outline: none;
+}
+.vocab-input:focus {
+    border-color: #10B981;
+}
+.vocab-delete-btn {
+    background: #FEE2E2;
+    color: #EF4444;
+    border: none;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Multiple Choice Buttons */
+.mc-btn {
+    background: white;
+    border: 3px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 12px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    word-break: break-word;
+}
+.mc-btn:active {
+    transform: scale(0.95);
+}
+.mc-btn.correct {
+    background: #D1FAE5;
+    border-color: #10B981;
+    color: #047857;
+}
+.mc-btn.wrong {
+    background: #FEE2E2;
+    border-color: #EF4444;
+    color: #B91C1C;
+}
