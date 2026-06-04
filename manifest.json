@@ -1,0 +1,18 @@
+{
+  "name": "Lernapp",
+  "short_name": "Lernapp",
+  "description": "Lernapp für Grundschüler: Mathe & Deutsch trainieren!",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}
