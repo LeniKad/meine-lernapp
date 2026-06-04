@@ -194,6 +194,23 @@
         </section>
     </div>
 
+    <!-- Print Modal -->
+    <div id="print-modal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 24px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center;">
+            <h2 style="margin-top: 0;">Liste drucken 🖨️</h2>
+            <p style="color: #4B5563; margin-bottom: 24px;">Wie soll der Ausdruck aussehen?</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn-primary" onclick="executePrint('all')" style="background: #3B82F6;">📄 Komplette Liste (Lernen)</button>
+                <button class="btn-primary" onclick="executePrint('en-only')" style="background: #10B981;">🇬🇧 Englisch-Test (Ausfüllen)</button>
+                <button class="btn-primary" onclick="executePrint('de-only')" style="background: #F59E0B;">🇩🇪 Deutsch-Test (Ausfüllen)</button>
+                <button class="btn-secondary" onclick="document.getElementById('print-modal').style.display = 'none'" style="margin-top: 12px;">Abbrechen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Area -->
+    <div id="print-area" style="display: none;"></div>
+
     <!-- Canvas Confetti Library via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="app.js"></script>

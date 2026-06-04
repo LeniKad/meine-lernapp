@@ -408,10 +408,13 @@ function renderPackages() {
         const card = document.createElement('div');
         card.className = 'package-card';
         card.innerHTML = `
-            <div>
-                <div class="pack-level">${pkg.level}</div>
-                <div class="pack-title">${pkg.title}</div>
-                <div class="pack-preview">${previewTxt}</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    <div class="pack-level">${pkg.level}</div>
+                    <div class="pack-title">${pkg.title}</div>
+                    <div class="pack-preview">${previewTxt}</div>
+                </div>
+                ${currentSubject === 'englisch' ? `<button class="btn-print" onclick="event.stopPropagation(); window.openPrintDialog('${pkg.id}')" title="Liste drucken">🖨️</button>` : ''}
             </div>
             ${statsHtml}
         `;
@@ -419,6 +422,40 @@ function renderPackages() {
         card.addEventListener('click', () => startTraining(pkg.id));
         packagesContainer.appendChild(card);
     });
+}
+
+let currentPrintPkgId = null;
+window.openPrintDialog = function(pkgId) {
+    currentPrintPkgId = pkgId;
+    document.getElementById('print-modal').style.display = 'flex';
+}
+
+window.executePrint = function(mode) {
+    const pkg = englishPackages.find(p => p.id === currentPrintPkgId);
+    if (!pkg) return;
+    
+    let html = `<h1>${pkg.title}</h1>`;
+    html += `<table class="print-table">`;
+    html += `<tr><th>Englisch</th><th>Deutsch</th></tr>`;
+    
+    pkg.items.forEach(item => {
+        let enText = item.q;
+        let deText = item.a;
+        
+        if (mode === 'en-only') deText = '';
+        else if (mode === 'de-only') enText = '';
+        
+        html += `<tr><td>${enText}</td><td>${deText}</td></tr>`;
+    });
+    
+    html += `</table>`;
+    
+    document.getElementById('print-area').innerHTML = html;
+    document.getElementById('print-modal').style.display = 'none';
+    
+    setTimeout(() => {
+        window.print();
+    }, 100);
 }
 
 // --- Speech Recognition Setup ---
