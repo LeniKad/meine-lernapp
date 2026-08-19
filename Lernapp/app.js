@@ -1,20 +1,20 @@
 // --- Data: Word Packages ---
 const wordPackages = [
-    { id: 'pa|ket1', level: 'Ein|fach 1', title: 'Pa|ket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
-    { id: 'pa|ket2', level: 'Ein|fach 2', title: 'Pa|ket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
-    { id: 'pa|ket3', level: 'Mit|tel 1', title: 'Pa|ket 3', words: ['sich', 'ein', 'eine', 'aber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
-    { id: 'pa|ket4', level: 'Mit|tel 2', title: 'Pa|ket 4', words: ['oder', 'sind', 'dann', 'um', 'doch', 'mehr', 'vor', 'zum', 'schon', 'wenn'] },
-    { id: 'pa|ket5', level: 'Schwe|rer 1', title: 'Pa|ket 5', words: ['wie|der', 'im|mer', 'et|was', 'nichts', 'weil', 'jetzt', 'al|les', 'da|mit', 'selbst', 'durch'] },
-    { id: 'pa|ket6', level: 'Schwe|rer 2', title: 'Pa|ket 6', words: ['die|ses', 'wer|den', 'kön|nen', 'ha|ben', 'ma|chen', 'sehr', 'ein|mal', 'heu|te', 'ganz', 'viel'] },
-    { id: 'pa|ket7', level: 'Pro|no|men 1', title: 'Pa|ket 7', words: ['sein', 'sei|ne', 'ihr', 'ihre', 'mein', 'mei|ne', 'dein', 'dei|ne', 'ihm', 'ihn'] },
-    { id: 'pa|ket8', level: 'Pro|no|men 2', title: 'Pa|ket 8', words: ['un|ser', 'un|se|re', 'euch', 'mich', 'dich', 'uns', 'man', 'wer', 'wo', 'wann'] },
-    { id: 'pa|ket9', level: 'Pro|fi 1', title: 'Pa|ket 9', words: ['ge|hen', 'ste|hen', 'se|hen', 'ohne', 'sehr', 'mehr', 'ihn', 'ih|nen', 'fah|ren', 'Jahr'] },
-    { id: 'pa|ket10', level: 'Pro|fi 2', title: 'Pa|ket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
-    { id: 'pa|ket11', level: 'Pro|fi 3', title: 'Pa|ket 11', words: ['des|halb', 'trotz|dem', 'nach|dem', 'be|vor', 'dar|um', 'da|vor', 'da|nach', 'da|bei', 'wie|so', 'war|um'] },
-    { id: 'pa|ket12', level: 'Spe|zi|al', title: 'Pa|ket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'war|um', 'wie|so', 'wes|halb', 'wo|hin', 'wo|her'] },
-    { id: 'pa|ket_abc_gross', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
-    { id: 'pa|ket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
-    { id: 'pa|ket_le|se|tex|te', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
+    { id: 'paket1', level: 'Ein|fach 1', title: 'Pa|ket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
+    { id: 'paket2', level: 'Ein|fach 2', title: 'Pa|ket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
+    { id: 'paket3', level: 'Mit|tel 1', title: 'Pa|ket 3', words: ['sich', 'ein', 'eine', 'aber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
+    { id: 'paket4', level: 'Mit|tel 2', title: 'Pa|ket 4', words: ['oder', 'sind', 'dann', 'um', 'doch', 'mehr', 'vor', 'zum', 'schon', 'wenn'] },
+    { id: 'paket5', level: 'Schwe|rer 1', title: 'Pa|ket 5', words: ['wie|der', 'im|mer', 'et|was', 'nichts', 'weil', 'jetzt', 'al|les', 'da|mit', 'selbst', 'durch'] },
+    { id: 'paket6', level: 'Schwe|rer 2', title: 'Pa|ket 6', words: ['die|ses', 'wer|den', 'kön|nen', 'ha|ben', 'ma|chen', 'sehr', 'ein|mal', 'heu|te', 'ganz', 'viel'] },
+    { id: 'paket7', level: 'Pro|no|men 1', title: 'Pa|ket 7', words: ['sein', 'sei|ne', 'ihr', 'ihre', 'mein', 'mei|ne', 'dein', 'dei|ne', 'ihm', 'ihn'] },
+    { id: 'paket8', level: 'Pro|no|men 2', title: 'Pa|ket 8', words: ['un|ser', 'un|se|re', 'euch', 'mich', 'dich', 'uns', 'man', 'wer', 'wo', 'wann'] },
+    { id: 'paket9', level: 'Pro|fi 1', title: 'Pa|ket 9', words: ['ge|hen', 'ste|hen', 'se|hen', 'ohne', 'sehr', 'mehr', 'ihn', 'ih|nen', 'fah|ren', 'Jahr'] },
+    { id: 'paket10', level: 'Pro|fi 2', title: 'Pa|ket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
+    { id: 'paket11', level: 'Pro|fi 3', title: 'Pa|ket 11', words: ['des|halb', 'trotz|dem', 'nach|dem', 'be|vor', 'dar|um', 'da|vor', 'da|nach', 'da|bei', 'wie|so', 'war|um'] },
+    { id: 'paket12', level: 'Spe|zi|al', title: 'Pa|ket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'war|um', 'wie|so', 'wes|halb', 'wo|hin', 'wo|her'] },
+    { id: 'paket_abc_gross', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
+    { id: 'paket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
+    { id: 'paket_lesetexte', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
 
 function generateMathPackages() {
