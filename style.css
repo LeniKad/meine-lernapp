@@ -461,8 +461,12 @@ input[type=number] {
 
 /* Syllable Colors */
 .s1 {
-    color: #1E3A8A; /* Dark Blue */
+    color: #1E3A8A !important; /* Dark Blue */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 .s2 {
-    color: #B91C1C; /* Dark Red */
+    color: #B91C1C !important; /* Dark Red */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }

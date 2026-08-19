@@ -511,10 +511,21 @@ window.finishReading = function() {
 
 window.printReading = function() {
     const chapter = storyChapters[currentChapterIndex];
-    const formattedText = chapter.text.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    let titleHtml = chapter.title;
+    let textHtml = chapter.text;
     
-    let html = `<h1>${chapter.title}</h1>`;
-    html += `<div style="font-size: 1.5rem; line-height: 1.8;">${formattedText}</div>`;
+    if (useSyllableColors) {
+        titleHtml = colorizeSyllables(titleHtml);
+        textHtml = colorizeSyllables(textHtml);
+    } else {
+        titleHtml = titleHtml.replace(/\|/g, '');
+        textHtml = textHtml.replace(/\|/g, '');
+    }
+
+    const formattedText = textHtml.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    
+    let html = `<h1>${titleHtml}</h1>`;
+    html += `<div style="font-size: 1.5rem; line-height: 1.8; color: black !important;">${formattedText}</div>`;
     
     document.getElementById('print-area').innerHTML = html;
     document.getElementById('print-modal').style.display = 'none';
