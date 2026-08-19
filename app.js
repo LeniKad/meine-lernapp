@@ -13,7 +13,8 @@ const wordPackages = [
     { id: 'paket11', level: 'Profi 3', title: 'Paket 11', words: ['deshalb', 'trotzdem', 'nachdem', 'bevor', 'darum', 'davor', 'danach', 'dabei', 'wieso', 'warum'] },
     { id: 'paket12', level: 'Spezial', title: 'Paket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'warum', 'wieso', 'weshalb', 'wohin', 'woher'] },
     { id: 'paket_abc_gross', level: 'ABC', title: 'Großbuchstaben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
-    { id: 'paket_abc_klein', level: 'abc', title: 'Kleinbuchstaben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] }
+    { id: 'paket_abc_klein', level: 'abc', title: 'Kleinbuchstaben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
+    { id: 'paket_lesetexte', level: 'Lesen', title: 'Tier-Abenteuer', words: [] }
 ];
 
 function generateMathPackages() {
@@ -125,6 +126,9 @@ function generateMathPackages() {
 const mathPackages = generateMathPackages();
 
 // --- Application State ---
+let englishPackages = JSON.parse(localStorage.getItem('custom_english_packages') || '[]');
+let isMultipleChoice = false;
+let currentEnglishDir = 'de-en';
 let currentSubject = 'deutsch'; 
 let currentPackage = null;
 let wordIndex = 0;
@@ -134,13 +138,16 @@ let isTrainingActive = false;
 let currentInputMode = 'mic';
 let currentAttempts = 0;
 let failedTasks = [];
+let currentWordStartTime = 0;
 
 // --- DOM Elements ---
 const screens = {
     subjects: document.getElementById('screen-subjects'),
     start: document.getElementById('screen-start'),
     training: document.getElementById('screen-training'),
-    result: document.getElementById('screen-result')
+    result: document.getElementById('screen-result'),
+    'vocab-editor': document.getElementById('screen-vocab-editor'),
+    reading: document.getElementById('screen-reading')
 };
 const packagesContainer = document.getElementById('packages-container');
 const currentWordEl = document.getElementById('current-word');
@@ -193,13 +200,22 @@ function init() {
 
 function handleAnswerSubmission(isExplicitSubmit) {
     if (!isTrainingActive || currentInputMode !== 'keyboard') return;
+    if (currentSubject === 'englisch' && isMultipleChoice) return;
     
-    let targetNum = currentSubject === 'deutsch' ? currentPackage.words[wordIndex] : currentPackage.items[wordIndex].a;
-    let currentVal = mathAnswerInput.value.replace(/\s+/g, '').toLowerCase();
+    let targetTxt = '';
+    if (currentSubject === 'deutsch') targetTxt = currentPackage.words[wordIndex];
+    else if (currentSubject === 'mathe') targetTxt = currentPackage.items[wordIndex].a;
+    else if (currentSubject === 'englisch') targetTxt = currentEnglishDir === 'de-en' ? currentPackage.items[wordIndex].a : currentPackage.items[wordIndex].q;
+    
+    let currentVal = mathAnswerInput.value.trim().toLowerCase();
     
     if (!currentVal) return;
 
-    if (currentVal === targetNum.toString().toLowerCase()) {
+    const isCorrect = currentSubject === 'mathe' 
+        ? currentVal.replace(/\s+/g, '') === targetTxt.toString().toLowerCase()
+        : currentVal === targetTxt.toString().toLowerCase();
+
+    if (isCorrect) {
         // Richtig
         mathAnswerInput.style.borderColor = "var(--secondary)";
         mathAnswerInput.style.color = "var(--secondary)";
@@ -212,10 +228,10 @@ function handleAnswerSubmission(isExplicitSubmit) {
         currentAttempts++;
         if (currentAttempts >= 3) {
             // Nach 3 Versuchen aufgeben
-            failedTasks.push(currentSubject === 'deutsch' ? {q: currentPackage.words[wordIndex], a: currentPackage.words[wordIndex]} : currentPackage.items[wordIndex]);
+            failedTasks.push(currentSubject === 'deutsch' ? {q: currentPackage.words[wordIndex], a: currentPackage.words[wordIndex]} : (currentSubject === 'englisch' ? {q: currentWordEl.textContent, a: targetTxt} : currentPackage.items[wordIndex]));
             mathAnswerInput.style.borderColor = "#EF4444";
             mathAnswerInput.style.color = "#EF4444";
-            mathAnswerInput.value = targetNum; // Lösung kurz zeigen
+            mathAnswerInput.value = targetTxt; // Lösung kurz zeigen
             mathAnswerInput.disabled = true;
             setTimeout(() => {
                 nextWord();
@@ -236,6 +252,99 @@ function handleAnswerSubmission(isExplicitSubmit) {
     }
 }
 
+window.openVocabEditor = function() {
+    document.getElementById('vocab-list-title').value = '';
+    const container = document.getElementById('vocab-rows-container');
+    container.innerHTML = '';
+    addVocabRow(); addVocabRow(); addVocabRow();
+    showScreen('vocab-editor');
+}
+
+window.autoTranslate = async function(enInputEl) {
+    const enWord = enInputEl.value.trim();
+    if (!enWord) return;
+    
+    const row = enInputEl.closest('.vocab-row');
+    const deInputEl = row.querySelector('.vocab-de');
+    
+    // Nur übersetzen, wenn das deutsche Feld noch leer ist
+    if (deInputEl.value.trim() !== '') return;
+    
+    const oldPlaceholder = deInputEl.placeholder;
+    deInputEl.placeholder = "Übersetze...";
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(enWord)}&langpair=en|de`);
+        const data = await res.json();
+        if (data && data.responseData && data.responseData.translatedText) {
+            deInputEl.value = data.responseData.translatedText;
+        }
+    } catch(e) {
+        console.error("Translation error", e);
+    } finally {
+        deInputEl.placeholder = oldPlaceholder;
+    }
+}
+
+window.addVocabRow = function(de = '', en = '') {
+    const container = document.getElementById('vocab-rows-container');
+    const row = document.createElement('div');
+    row.className = 'vocab-row';
+    row.innerHTML = `
+        <input type="text" class="vocab-input vocab-en" placeholder="Englisch" value="${en}" onblur="autoTranslate(this)">
+        <input type="text" class="vocab-input vocab-de" placeholder="Deutsch" value="${de}">
+        <button class="vocab-delete-btn" onclick="this.parentElement.remove()">🗑️</button>
+    `;
+    container.appendChild(row);
+}
+
+window.saveVocabPackage = function() {
+    const title = document.getElementById('vocab-list-title').value.trim();
+    if (!title) return alert("Bitte vergib einen Namen für die Liste.");
+    const rows = document.querySelectorAll('.vocab-row');
+    let items = [];
+    rows.forEach(row => {
+        const de = row.querySelector('.vocab-de').value.trim();
+        const en = row.querySelector('.vocab-en').value.trim();
+        if (de && en) items.push({ q: de, a: en });
+    });
+    if (items.length < 4) return alert("Bitte trage mindestens 4 Vokabelpaare ein (für Multiple Choice benötigt).");
+    
+    englishPackages.push({
+        id: 'vocab_' + Date.now(),
+        level: 'Eigene Liste',
+        title: title,
+        items: items
+    });
+    localStorage.setItem('custom_english_packages', JSON.stringify(englishPackages));
+    openSubject('englisch');
+}
+
+window.handleMCAnswer = function(btn, selectedVal, targetAns) {
+    if (!isTrainingActive) return;
+    const allBtns = document.querySelectorAll('.mc-btn');
+    allBtns.forEach(b => b.disabled = true);
+    
+    if (selectedVal === targetAns) {
+        btn.classList.add('correct');
+        setTimeout(() => nextWord(), 600);
+    } else {
+        btn.classList.add('wrong');
+        currentAttempts++;
+        const correctBtn = Array.from(allBtns).find(b => b.textContent === targetAns);
+        
+        if (currentAttempts >= 3) {
+            failedTasks.push({ q: currentWordEl.textContent, a: targetAns });
+            if (correctBtn) correctBtn.classList.add('correct');
+            setTimeout(() => nextWord(), 1500);
+        } else {
+            setTimeout(() => {
+                btn.classList.remove('wrong');
+                allBtns.forEach(b => b.disabled = false);
+            }, 600);
+        }
+    }
+}
+
 window.openSubject = function(subject) {
     currentSubject = subject;
     
@@ -249,6 +358,9 @@ window.openSubject = function(subject) {
         } else if (subject === 'mathe') {
             titleEl.textContent = '🔢 Das 1x1';
             descEl.textContent = 'Lerne die Malfolgen rasend schnell!';
+        } else if (subject === 'englisch') {
+            titleEl.textContent = '🌍 Vokabeln';
+            descEl.textContent = 'Erstelle und lerne eigene Listen!';
         }
     }
 
@@ -264,12 +376,15 @@ function showScreen(screenName) {
 // --- Home Screen Logic ---
 function renderPackages() {
     const mathOptions = document.getElementById('math-options-container');
-    if (mathOptions) {
-        mathOptions.style.display = (currentSubject === 'mathe') ? 'flex' : 'none';
-    }
+    const englishOptions = document.getElementById('english-options-container');
+    const createVocab = document.getElementById('create-vocab-container');
+    
+    if (mathOptions) mathOptions.style.display = (currentSubject === 'mathe') ? 'flex' : 'none';
+    if (englishOptions) englishOptions.style.display = (currentSubject === 'englisch') ? 'flex' : 'none';
+    if (createVocab) createVocab.style.display = (currentSubject === 'englisch') ? 'block' : 'none';
 
     packagesContainer.innerHTML = '';
-    const activePackages = currentSubject === 'deutsch' ? wordPackages : mathPackages;
+    const activePackages = currentSubject === 'deutsch' ? wordPackages : (currentSubject === 'mathe' ? mathPackages : englishPackages);
     
     activePackages.forEach(pkg => {
         const bestDataRaw = localStorage.getItem(`blitzlesen_${pkg.id}`);
@@ -287,17 +402,33 @@ function renderPackages() {
         let previewTxt = '';
         if(currentSubject === 'deutsch'){
             previewTxt = pkg.words.slice(0, 3).join(', ') + '...';
-        } else {
+        } else if(currentSubject === 'mathe') {
             previewTxt = pkg.items.slice(0, 3).map(i => i.q.replace(' = ','')).join(', ') + '...';
+        } else {
+            previewTxt = pkg.items.slice(0, 3).map(i => `${i.q} ➔ ${i.a}`).join(', ') + '...';
+        }
+
+        const lastCompletedRaw = localStorage.getItem(`lastCompleted_${pkg.id}`);
+        let completedTodayBadge = '';
+        if (lastCompletedRaw) {
+            const lastCompletedDate = new Date(lastCompletedRaw);
+            const today = new Date();
+            if (lastCompletedDate.setHours(0,0,0,0) === today.setHours(0,0,0,0)) {
+                completedTodayBadge = `<div style="background: #D1FAE5; color: #047857; font-size: 0.8rem; padding: 4px 8px; border-radius: 8px; font-weight: bold; margin-bottom: 8px; display: inline-block;">✅ Heute geübt</div>`;
+            }
         }
 
         const card = document.createElement('div');
         card.className = 'package-card';
         card.innerHTML = `
-            <div>
-                <div class="pack-level">${pkg.level}</div>
-                <div class="pack-title">${pkg.title}</div>
-                <div class="pack-preview">${previewTxt}</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    ${completedTodayBadge}
+                    <div class="pack-level">${pkg.level}</div>
+                    <div class="pack-title">${pkg.title}</div>
+                    <div class="pack-preview">${previewTxt}</div>
+                </div>
+                ${currentSubject === 'englisch' ? `<button class="btn-print" onclick="event.stopPropagation(); window.openPrintDialog('${pkg.id}')" title="Liste drucken">🖨️</button>` : ''}
             </div>
             ${statsHtml}
         `;
@@ -305,6 +436,99 @@ function renderPackages() {
         card.addEventListener('click', () => startTraining(pkg.id));
         packagesContainer.appendChild(card);
     });
+}
+
+// --- Reading Mode Logic ---
+let currentChapterIndex = 0;
+
+window.initReadingMode = function() {
+    currentPackage = wordPackages.find(p => p.id === 'paket_lesetexte');
+    const savedIndex = localStorage.getItem('leseabenteuer_chapter');
+    currentChapterIndex = savedIndex ? parseInt(savedIndex) : 0;
+    
+    if (typeof storyChapters === 'undefined') {
+        alert("Fehler: Geschichten konnten nicht geladen werden.");
+        return;
+    }
+    
+    if (currentChapterIndex >= storyChapters.length) {
+        currentChapterIndex = 0;
+    }
+    
+    renderChapter(currentChapterIndex);
+    showScreen('reading');
+}
+
+window.renderChapter = function(index) {
+    const chapter = storyChapters[index];
+    document.getElementById('reading-title').textContent = chapter.title;
+    const formattedText = chapter.text.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    document.getElementById('reading-content').innerHTML = formattedText;
+}
+
+window.nextChapter = function() {
+    currentChapterIndex++;
+    if (currentChapterIndex >= storyChapters.length) {
+        currentChapterIndex = 0;
+    }
+    localStorage.setItem('leseabenteuer_chapter', currentChapterIndex);
+    renderChapter(currentChapterIndex);
+    document.getElementById('reading-content').scrollTo(0, 0);
+}
+
+window.finishReading = function() {
+    localStorage.setItem('leseabenteuer_chapter', currentChapterIndex + 1);
+    localStorage.setItem(`lastCompleted_paket_lesetexte`, new Date().toISOString());
+    openSubject('deutsch');
+}
+
+window.printReading = function() {
+    const chapter = storyChapters[currentChapterIndex];
+    const formattedText = chapter.text.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    
+    let html = `<h1>${chapter.title}</h1>`;
+    html += `<div style="font-size: 1.5rem; line-height: 1.8;">${formattedText}</div>`;
+    
+    document.getElementById('print-area').innerHTML = html;
+    document.getElementById('print-modal').style.display = 'none';
+    
+    setTimeout(() => {
+        window.print();
+    }, 100);
+}
+
+let currentPrintPkgId = null;
+window.openPrintDialog = function(pkgId) {
+    currentPrintPkgId = pkgId;
+    document.getElementById('print-modal').style.display = 'flex';
+}
+
+window.executePrint = function(mode) {
+    const pkg = englishPackages.find(p => p.id === currentPrintPkgId);
+    if (!pkg) return;
+    
+    let html = `<h1>${pkg.title}</h1>`;
+    html += `<table class="print-table">`;
+    html += `<tr><th>Englisch</th><th>Deutsch</th></tr>`;
+    
+    pkg.items.forEach(item => {
+        let enText = item.q;
+        let deText = item.a;
+        
+        if (mode === 'en-only') deText = '';
+        else if (mode === 'de-only') enText = '';
+        
+        html += `<tr><td>${enText}</td><td>${deText}</td></tr>`;
+    });
+    
+    html += `</table>`;
+    
+    document.getElementById('print-area').innerHTML = html;
+    document.getElementById('print-modal').style.display = 'none';
+    
+    setTimeout(() => {
+        window.print();
+    }, 100);
 }
 
 // --- Speech Recognition Setup ---
@@ -369,6 +593,11 @@ function setupSpeechRecognition() {
 
 // --- Training Logic ---
 function startTraining(packageId) {
+    if (packageId === 'paket_lesetexte') {
+        initReadingMode();
+        return;
+    }
+
     if (currentSubject === 'deutsch') {
         let pkg = wordPackages.find(p => p.id === packageId);
         currentPackage = { ...pkg, words: [...pkg.words] };
@@ -376,7 +605,7 @@ function startTraining(packageId) {
             const j = Math.floor(Math.random() * (i + 1));
             [currentPackage.words[i], currentPackage.words[j]] = [currentPackage.words[j], currentPackage.words[i]];
         }
-    } else {
+    } else if (currentSubject === 'mathe') {
         // Bei Mathe mischen wir das Profi Paket und Ergänzen immer neu, wenn es aufgerufen wird.
         if(packageId === 'mathe_profi' || packageId === 'mathe_ergaenzen') {
             const pkgs = generateMathPackages();
@@ -392,6 +621,18 @@ function startTraining(packageId) {
                 }
             }
         }
+    } else if (currentSubject === 'englisch') {
+        let pkg = englishPackages.find(p => p.id === packageId);
+        currentPackage = { ...pkg, items: [...pkg.items] };
+        for (let i = currentPackage.items.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [currentPackage.items[i], currentPackage.items[j]] = [currentPackage.items[j], currentPackage.items[i]];
+        }
+        isMultipleChoice = document.getElementById('english-mc-toggle').checked;
+        const dirRadios = document.getElementsByName('english-dir');
+        for (const radio of dirRadios) {
+            if (radio.checked) currentEnglishDir = radio.value;
+        }
     }
     
     wordIndex = 0;
@@ -401,6 +642,14 @@ function startTraining(packageId) {
     const modeRadios = document.getElementsByName('input-mode');
     for (const radio of modeRadios) {
         if (radio.checked) currentInputMode = radio.value;
+    }
+    
+    if (currentSubject === 'mathe') {
+        document.getElementById('math-answer-input').setAttribute('inputmode', 'numeric');
+        document.getElementById('math-answer-input').setAttribute('pattern', '[0-9]*');
+    } else {
+        document.getElementById('math-answer-input').removeAttribute('inputmode');
+        document.getElementById('math-answer-input').removeAttribute('pattern');
     }
     
     const micArea = document.getElementById('mic-indicator-area');
@@ -436,19 +685,24 @@ function startTraining(packageId) {
 function showWord() {
     const listLen = currentSubject === 'deutsch' ? currentPackage.words.length : currentPackage.items.length;
     const mathVis = document.getElementById('math-visualization');
+    const mcGrid = document.getElementById('mc-options-grid');
     if (mathVis) {
         mathVis.style.display = 'none';
         mathVis.innerHTML = '';
+    }
+    if (mcGrid) mcGrid.style.display = 'none';
+    if (currentInputMode === 'keyboard') {
+        const kbArea = document.getElementById('keyboard-input-area');
+        if (kbArea) kbArea.style.display = (currentSubject === 'englisch' && isMultipleChoice) ? 'none' : 'block';
     }
 
     if (wordIndex < listLen) {
         if (currentSubject === 'deutsch') {
             currentWordEl.textContent = currentPackage.words[wordIndex];
-        } else {
+        } else if (currentSubject === 'mathe') {
             let questionText = currentPackage.items[wordIndex].q;
             const learnToggle = document.getElementById('math-learn-toggle');
             if (learnToggle && learnToggle.checked) {
-                // Ergebnis direkt in grün dahinter packen
                 currentWordEl.innerHTML = `<span>${questionText}</span><span style="color: var(--secondary); margin-left: 12px; display: inline-block;">${currentPackage.items[wordIndex].a}</span>`;
             } else {
                 currentWordEl.textContent = questionText;
@@ -459,7 +713,6 @@ function showWord() {
                 if (match) {
                     const factor1 = parseInt(match[1]);
                     const factor2 = parseInt(match[2]);
-                    // z.B. 2 x 3 = 3 Reihen mit jeweils 2 Elementen
                     const cols = factor1;
                     const rows = factor2;
                     mathVis.style.display = 'flex';
@@ -479,12 +732,40 @@ function showWord() {
                     }
                 }
             }
+        } else if (currentSubject === 'englisch') {
+            const item = currentPackage.items[wordIndex];
+            const qTxt = currentEnglishDir === 'de-en' ? item.q : item.a;
+            const targetAns = currentEnglishDir === 'de-en' ? item.a : item.q;
+            currentWordEl.textContent = qTxt;
+            
+            if (isMultipleChoice) {
+                mcGrid.style.display = 'grid';
+                let options = [targetAns];
+                let allItems = [...currentPackage.items];
+                allItems.splice(wordIndex, 1);
+                allItems.sort(() => 0.5 - Math.random());
+                for(let i=0; i<3 && i<allItems.length; i++) {
+                    options.push(currentEnglishDir === 'de-en' ? allItems[i].a : allItems[i].q);
+                }
+                options.sort(() => 0.5 - Math.random());
+                
+                mcGrid.innerHTML = '';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'mc-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => handleMCAnswer(btn, opt, targetAns);
+                    mcGrid.appendChild(btn);
+                });
+            }
         }
         
         currentWordEl.style.transform = 'scale(0.9)';
         setTimeout(() => {
             currentWordEl.style.transform = 'scale(1)';
         }, 50);
+
+        currentWordStartTime = Date.now();
 
         if (currentInputMode === 'keyboard' && mathAnswerInput) {
             currentAttempts = 0;
@@ -500,6 +781,14 @@ function showWord() {
 }
 
 function nextWord() {
+    if (currentSubject === 'deutsch' && (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein')) {
+        const duration = Date.now() - currentWordStartTime;
+        // Wenn das Kind länger als 2.5 Sekunden braucht, wird der Buchstabe hinten wieder drangehängt.
+        if (duration > 2500) {
+            currentPackage.words.push(currentPackage.words[wordIndex]);
+        }
+    }
+
     wordIndex++;
     updateProgressBar();
     showWord();
@@ -530,6 +819,9 @@ function finishTraining() {
         const totalLetters = currentPackage.words.reduce((sum, word) => sum + word.length, 0);
         spb = totalSeconds / totalLetters;
     }
+    
+    // Vermerken, dass das Paket heute abgeschlossen wurde
+    localStorage.setItem(`lastCompleted_${currentPackage.id}`, new Date().toISOString());
     
     showResults(totalSeconds, spb);
 }
