@@ -1,19 +1,20 @@
 // --- Data: Word Packages ---
 const wordPackages = [
-    { id: 'paket1', level: 'Einfach 1', title: 'Paket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
-    { id: 'paket2', level: 'Einfach 2', title: 'Paket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
-    { id: 'paket3', level: 'Mittel 1', title: 'Paket 3', words: ['sich', 'ein', 'eine', 'aber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
-    { id: 'paket4', level: 'Mittel 2', title: 'Paket 4', words: ['oder', 'sind', 'dann', 'um', 'doch', 'mehr', 'vor', 'zum', 'schon', 'wenn'] },
-    { id: 'paket5', level: 'Schwerer 1', title: 'Paket 5', words: ['wieder', 'immer', 'etwas', 'nichts', 'weil', 'jetzt', 'alles', 'damit', 'selbst', 'durch'] },
-    { id: 'paket6', level: 'Schwerer 2', title: 'Paket 6', words: ['dieses', 'werden', 'können', 'haben', 'machen', 'sehr', 'einmal', 'heute', 'ganz', 'viel'] },
-    { id: 'paket7', level: 'Pronomen 1', title: 'Paket 7', words: ['sein', 'seine', 'ihr', 'ihre', 'mein', 'meine', 'dein', 'deine', 'ihm', 'ihn'] },
-    { id: 'paket8', level: 'Pronomen 2', title: 'Paket 8', words: ['unser', 'unsere', 'euch', 'mich', 'dich', 'uns', 'man', 'wer', 'wo', 'wann'] },
-    { id: 'paket9', level: 'Profi 1', title: 'Paket 9', words: ['gehen', 'stehen', 'sehen', 'ohne', 'sehr', 'mehr', 'ihn', 'ihnen', 'fahren', 'Jahr'] },
-    { id: 'paket10', level: 'Profi 2', title: 'Paket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
-    { id: 'paket11', level: 'Profi 3', title: 'Paket 11', words: ['deshalb', 'trotzdem', 'nachdem', 'bevor', 'darum', 'davor', 'danach', 'dabei', 'wieso', 'warum'] },
-    { id: 'paket12', level: 'Spezial', title: 'Paket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'warum', 'wieso', 'weshalb', 'wohin', 'woher'] },
-    { id: 'paket_abc_gross', level: 'ABC', title: 'Großbuchstaben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
-    { id: 'paket_abc_klein', level: 'abc', title: 'Kleinbuchstaben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] }
+    { id: 'pa|ket1', level: 'Ein|fach 1', title: 'Pa|ket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
+    { id: 'pa|ket2', level: 'Ein|fach 2', title: 'Pa|ket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
+    { id: 'pa|ket3', level: 'Mit|tel 1', title: 'Pa|ket 3', words: ['sich', 'ein', 'eine', 'aber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
+    { id: 'pa|ket4', level: 'Mit|tel 2', title: 'Pa|ket 4', words: ['oder', 'sind', 'dann', 'um', 'doch', 'mehr', 'vor', 'zum', 'schon', 'wenn'] },
+    { id: 'pa|ket5', level: 'Schwe|rer 1', title: 'Pa|ket 5', words: ['wie|der', 'im|mer', 'et|was', 'nichts', 'weil', 'jetzt', 'al|les', 'da|mit', 'selbst', 'durch'] },
+    { id: 'pa|ket6', level: 'Schwe|rer 2', title: 'Pa|ket 6', words: ['die|ses', 'wer|den', 'kön|nen', 'ha|ben', 'ma|chen', 'sehr', 'ein|mal', 'heu|te', 'ganz', 'viel'] },
+    { id: 'pa|ket7', level: 'Pro|no|men 1', title: 'Pa|ket 7', words: ['sein', 'sei|ne', 'ihr', 'ihre', 'mein', 'mei|ne', 'dein', 'dei|ne', 'ihm', 'ihn'] },
+    { id: 'pa|ket8', level: 'Pro|no|men 2', title: 'Pa|ket 8', words: ['un|ser', 'un|se|re', 'euch', 'mich', 'dich', 'uns', 'man', 'wer', 'wo', 'wann'] },
+    { id: 'pa|ket9', level: 'Pro|fi 1', title: 'Pa|ket 9', words: ['ge|hen', 'ste|hen', 'se|hen', 'ohne', 'sehr', 'mehr', 'ihn', 'ih|nen', 'fah|ren', 'Jahr'] },
+    { id: 'pa|ket10', level: 'Pro|fi 2', title: 'Pa|ket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
+    { id: 'pa|ket11', level: 'Pro|fi 3', title: 'Pa|ket 11', words: ['des|halb', 'trotz|dem', 'nach|dem', 'be|vor', 'dar|um', 'da|vor', 'da|nach', 'da|bei', 'wie|so', 'war|um'] },
+    { id: 'pa|ket12', level: 'Spe|zi|al', title: 'Pa|ket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'war|um', 'wie|so', 'wes|halb', 'wo|hin', 'wo|her'] },
+    { id: 'pa|ket_abc_gross', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
+    { id: 'pa|ket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
+    { id: 'pa|ket_le|se|tex|te', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
 
 function generateMathPackages() {
@@ -137,6 +138,7 @@ let isTrainingActive = false;
 let currentInputMode = 'mic';
 let currentAttempts = 0;
 let failedTasks = [];
+let currentWordStartTime = 0;
 
 // --- DOM Elements ---
 const screens = {
@@ -144,7 +146,8 @@ const screens = {
     start: document.getElementById('screen-start'),
     training: document.getElementById('screen-training'),
     result: document.getElementById('screen-result'),
-    'vocab-editor': document.getElementById('screen-vocab-editor')
+    'vocab-editor': document.getElementById('screen-vocab-editor'),
+    reading: document.getElementById('screen-reading')
 };
 const packagesContainer = document.getElementById('packages-container');
 const currentWordEl = document.getElementById('current-word');
@@ -405,11 +408,22 @@ function renderPackages() {
             previewTxt = pkg.items.slice(0, 3).map(i => `${i.q} ➔ ${i.a}`).join(', ') + '...';
         }
 
+        const lastCompletedRaw = localStorage.getItem(`lastCompleted_${pkg.id}`);
+        let completedTodayBadge = '';
+        if (lastCompletedRaw) {
+            const lastCompletedDate = new Date(lastCompletedRaw);
+            const today = new Date();
+            if (lastCompletedDate.setHours(0,0,0,0) === today.setHours(0,0,0,0)) {
+                completedTodayBadge = `<div style="background: #D1FAE5; color: #047857; font-size: 0.8rem; padding: 4px 8px; border-radius: 8px; font-weight: bold; margin-bottom: 8px; display: inline-block;">✅ Heute geübt</div>`;
+            }
+        }
+
         const card = document.createElement('div');
         card.className = 'package-card';
         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                 <div>
+                    ${completedTodayBadge}
                     <div class="pack-level">${pkg.level}</div>
                     <div class="pack-title">${pkg.title}</div>
                     <div class="pack-preview">${previewTxt}</div>
@@ -422,6 +436,92 @@ function renderPackages() {
         card.addEventListener('click', () => startTraining(pkg.id));
         packagesContainer.appendChild(card);
     });
+}
+
+// --- Reading Mode Logic ---
+let currentChapterIndex = 0;
+
+window.initReadingMode = function() {
+    currentPackage = wordPackages.find(p => p.id === 'paket_lesetexte');
+    const savedIndex = localStorage.getItem('leseabenteuer_chapter');
+    currentChapterIndex = savedIndex ? parseInt(savedIndex) : 0;
+    
+    if (typeof storyChapters === 'undefined') {
+        alert("Fehler: Geschichten konnten nicht geladen werden.");
+        return;
+    }
+    
+    if (currentChapterIndex >= storyChapters.length) {
+        currentChapterIndex = 0;
+    }
+    
+    renderChapter(currentChapterIndex);
+    showScreen('reading');
+}
+
+let useSyllableColors = true; // State for syllable coloring
+
+window.colorizeSyllables = function(text) {
+    if (!text.includes('|')) return text;
+    return text.replace(/[a-zA-ZäöüÄÖÜß|]+/g, function(match) {
+        if (!match.includes('|')) return match;
+        const syllables = match.split('|');
+        let html = '';
+        syllables.forEach((syl, i) => {
+            html += `<span class="s${(i % 2) + 1}">${syl}</span>`;
+        });
+        return html;
+    });
+}
+
+window.renderChapter = function(index) {
+    const chapter = storyChapters[index];
+    
+    let titleHtml = chapter.title;
+    let textHtml = chapter.text;
+    
+    if (useSyllableColors) {
+        titleHtml = colorizeSyllables(titleHtml);
+        textHtml = colorizeSyllables(textHtml);
+    } else {
+        titleHtml = titleHtml.replace(/\|/g, '');
+        textHtml = textHtml.replace(/\|/g, '');
+    }
+    
+    document.getElementById('reading-title').innerHTML = titleHtml;
+    const formattedText = textHtml.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    document.getElementById('reading-content').innerHTML = formattedText;
+}
+
+window.nextChapter = function() {
+    currentChapterIndex++;
+    if (currentChapterIndex >= storyChapters.length) {
+        currentChapterIndex = 0;
+    }
+    localStorage.setItem('leseabenteuer_chapter', currentChapterIndex);
+    renderChapter(currentChapterIndex);
+    document.getElementById('reading-content').scrollTo(0, 0);
+}
+
+window.finishReading = function() {
+    localStorage.setItem('leseabenteuer_chapter', currentChapterIndex + 1);
+    localStorage.setItem(`lastCompleted_paket_lesetexte`, new Date().toISOString());
+    openSubject('deutsch');
+}
+
+window.printReading = function() {
+    const chapter = storyChapters[currentChapterIndex];
+    const formattedText = chapter.text.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    
+    let html = `<h1>${chapter.title}</h1>`;
+    html += `<div style="font-size: 1.5rem; line-height: 1.8;">${formattedText}</div>`;
+    
+    document.getElementById('print-area').innerHTML = html;
+    document.getElementById('print-modal').style.display = 'none';
+    
+    setTimeout(() => {
+        window.print();
+    }, 100);
 }
 
 let currentPrintPkgId = null;
@@ -488,7 +588,7 @@ function setupSpeechRecognition() {
         const combinedTranscript = (finalTranscript + ' ' + interimTranscript).toLowerCase().trim();
         
         if (currentSubject === 'deutsch') {
-            const targetWord = currentPackage.words[wordIndex].toLowerCase();
+            const targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
             if (combinedTranscript.includes(targetWord)) {
                 nextWord();
             }
@@ -520,6 +620,11 @@ function setupSpeechRecognition() {
 
 // --- Training Logic ---
 function startTraining(packageId) {
+    if (packageId === 'paket_lesetexte') {
+        initReadingMode();
+        return;
+    }
+
     if (currentSubject === 'deutsch') {
         let pkg = wordPackages.find(p => p.id === packageId);
         currentPackage = { ...pkg, words: [...pkg.words] };
@@ -620,7 +725,12 @@ function showWord() {
 
     if (wordIndex < listLen) {
         if (currentSubject === 'deutsch') {
-            currentWordEl.textContent = currentPackage.words[wordIndex];
+            let displayWord = currentPackage.words[wordIndex];
+            if (useSyllableColors) {
+                currentWordEl.innerHTML = colorizeSyllables(displayWord);
+            } else {
+                currentWordEl.textContent = displayWord.replace(/\|/g, '');
+            }
         } else if (currentSubject === 'mathe') {
             let questionText = currentPackage.items[wordIndex].q;
             const learnToggle = document.getElementById('math-learn-toggle');
@@ -687,6 +797,8 @@ function showWord() {
             currentWordEl.style.transform = 'scale(1)';
         }, 50);
 
+        currentWordStartTime = Date.now();
+
         if (currentInputMode === 'keyboard' && mathAnswerInput) {
             currentAttempts = 0;
             mathAnswerInput.disabled = false;
@@ -701,6 +813,14 @@ function showWord() {
 }
 
 function nextWord() {
+    if (currentSubject === 'deutsch' && (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein')) {
+        const duration = Date.now() - currentWordStartTime;
+        // Wenn das Kind länger als 2.5 Sekunden braucht, wird der Buchstabe hinten wieder drangehängt.
+        if (duration > 2500) {
+            currentPackage.words.push(currentPackage.words[wordIndex]);
+        }
+    }
+
     wordIndex++;
     updateProgressBar();
     showWord();
@@ -731,6 +851,9 @@ function finishTraining() {
         const totalLetters = currentPackage.words.reduce((sum, word) => sum + word.length, 0);
         spb = totalSeconds / totalLetters;
     }
+    
+    // Vermerken, dass das Paket heute abgeschlossen wurde
+    localStorage.setItem(`lastCompleted_${currentPackage.id}`, new Date().toISOString());
     
     showResults(totalSeconds, spb);
 }

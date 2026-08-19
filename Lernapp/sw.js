@@ -1,9 +1,10 @@
-const CACHE_NAME = 'blitzlesen-cache-v12';
+const CACHE_NAME = 'blitzlesen-cache-v17';
 const urlsToCache = [
   './',
   './index.html',
   './style.css',
   './app.js',
+  './stories.js',
   './icon.svg',
   'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap',
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js'
