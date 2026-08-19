@@ -401,7 +401,7 @@ function renderPackages() {
         
         let previewTxt = '';
         if(currentSubject === 'deutsch'){
-            previewTxt = pkg.words.slice(0, 3).join(', ') + '...';
+            previewTxt = pkg.words.slice(0, 3).join(', ').replace(/\|/g, '') + '...';
         } else if(currentSubject === 'mathe') {
             previewTxt = pkg.items.slice(0, 3).map(i => i.q.replace(' = ','')).join(', ') + '...';
         } else {
@@ -424,8 +424,8 @@ function renderPackages() {
             <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                 <div>
                     ${completedTodayBadge}
-                    <div class="pack-level">${pkg.level}</div>
-                    <div class="pack-title">${pkg.title}</div>
+                    <div class="pack-level">${(pkg.level || '').replace(/\|/g, '')}</div>
+                    <div class="pack-title">${(pkg.title || '').replace(/\|/g, '')}</div>
                     <div class="pack-preview">${previewTxt}</div>
                 </div>
                 ${currentSubject === 'englisch' ? `<button class="btn-print" onclick="event.stopPropagation(); window.openPrintDialog('${pkg.id}')" title="Liste drucken">🖨️</button>` : ''}
