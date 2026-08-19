@@ -458,3 +458,11 @@ input[type=number] {
         display: none !important;
     }
 }
+
+/* Syllable Colors */
+.s1 {
+    color: #1E3A8A; /* Dark Blue */
+}
+.s2 {
+    color: #B91C1C; /* Dark Red */
+}
