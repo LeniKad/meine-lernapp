@@ -522,7 +522,7 @@ window.printReading = function() {
         textHtml = textHtml.replace(/\|/g, '');
     }
 
-    const formattedText = textHtml.split('\\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
+    const formattedText = textHtml.split('\n').map(p => `<p style="margin-bottom: 1em;">${p}</p>`).join('');
     
     let html = `<h1>${titleHtml}</h1>`;
     html += `<div style="font-size: 1.5rem; line-height: 1.8; color: black !important;">${formattedText}</div>`;
