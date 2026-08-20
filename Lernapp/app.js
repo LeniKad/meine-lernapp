@@ -503,6 +503,16 @@ window.nextChapter = function() {
     document.getElementById('reading-content').scrollTo(0, 0);
 }
 
+window.prevChapter = function() {
+    currentChapterIndex--;
+    if (currentChapterIndex < 0) {
+        currentChapterIndex = storyChapters.length - 1;
+    }
+    localStorage.setItem('leseabenteuer_chapter', currentChapterIndex);
+    renderChapter(currentChapterIndex);
+    document.getElementById('reading-content').scrollTo(0, 0);
+}
+
 window.finishReading = function() {
     localStorage.setItem('leseabenteuer_chapter', currentChapterIndex + 1);
     localStorage.setItem(`lastCompleted_paket_lesetexte`, new Date().toISOString());
