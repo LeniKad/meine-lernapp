@@ -14,8 +14,41 @@ const wordPackages = [
     { id: 'paket12', level: 'Spe|zi|al', title: 'Pa|ket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'war|um', 'wie|so', 'wes|halb', 'wo|hin', 'wo|her'] },
     { id: 'paket_abc_gross', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
     { id: 'paket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
+    { id: 'paket_huerdenlauf', level: 'Spiel', title: 'Hür|den|lauf (ABC)', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
     { id: 'paket_lesetexte', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
+
+const letterDictionary = {
+    'A': ['🍎 Apfel', '🐒 Affe', '🚗 Auto'],
+    'B': ['🐻 Bär', '🍌 Banane', '🚌 Bus'],
+    'C': ['🤡 Clown', '💻 Computer', '🏕️ Camping'],
+    'D': ['🐬 Delfin', '🦕 Dino', '🍩 Donut'],
+    'E': ['🐘 Elefant', '🍓 Erdbeere', '🦆 Ente'],
+    'F': ['🐟 Fisch', '🐸 Frosch', '🦊 Fuchs'],
+    'G': ['🦒 Giraffe', '🎸 Gitarre', '🎁 Geschenk'],
+    'H': ['🐶 Hund', '🚁 Hubschrauber', '🏠 Haus'],
+    'I': ['🦔 Igel', '🏝️ Insel', '💡 Idee'],
+    'J': ['🐆 Jaguar', '👖 Jeans', '🪀 Jojo'],
+    'K': ['🐱 Katze', '🐪 Kamel', '👑 Krone'],
+    'L': ['🦁 Löwe', '🍭 Lutscher', '🪜 Leiter'],
+    'M': ['🐭 Maus', '🌙 Mond', '🏍️ Motorrad'],
+    'N': ['🦛 Nashorn', '🍝 Nudeln', '🥜 Nuss'],
+    'O': ['🐙 Oktopus', '🍊 Orange', '👂 Ohr'],
+    'P': ['🐼 Panda', '🍕 Pizza', '🍄 Pilz'],
+    'Q': ['🪼 Qualle', '🐸 Quak', '⬜ Quadrat'],
+    'R': ['🚀 Rakete', '🌹 Rose', '🌧️ Regen'],
+    'S': ['☀️ Sonne', '🚢 Schiff', '🐍 Schlange'],
+    'T': ['🐯 Tiger', '🍅 Tomate', '🚜 Traktor'],
+    'U': ['🦉 Uhu', '🕰️ Uhr', '🛸 UFO'],
+    'V': ['🐦 Vogel', '🌋 Vulkan', '🧛 Vampir'],
+    'W': ['🐳 Wal', '☁️ Wolke', '🐺 Wolf'],
+    'X': ['🎷 Xylophon'],
+    'Y': ['🧘 Yoga', '🛥️ Yacht'],
+    'Z': ['🦓 Zebra', '🍋 Zitrone', '⛺ Zelt'],
+    'Ä': ['🍏 Äpfel', '🌿 Äste'],
+    'Ö': ['🛢️ Öl', '🚪 Öffnen'],
+    'Ü': ['🎁 Überraschung']
+};
 
 function generateMathPackages() {
     const packages = [];
@@ -147,7 +180,8 @@ const screens = {
     training: document.getElementById('screen-training'),
     result: document.getElementById('screen-result'),
     'vocab-editor': document.getElementById('screen-vocab-editor'),
-    reading: document.getElementById('screen-reading')
+    reading: document.getElementById('screen-reading'),
+    review: document.getElementById('screen-review')
 };
 const packagesContainer = document.getElementById('packages-container');
 const currentWordEl = document.getElementById('current-word');
@@ -173,8 +207,8 @@ function init() {
     // Event Listeners
     btnCancel.addEventListener('click', cancelTraining);
     btnNextManual.addEventListener('click', () => { if (isTrainingActive) nextWord(); });
-    btnRestart.addEventListener('click', () => startTraining(currentPackage.id));
-    btnBackHome.addEventListener('click', () => showScreen('start'));
+    btnRestart.onclick = () => startTraining(currentPackage.id);
+    btnBackHome.onclick = () => showScreen('start');
     
     if (mathAnswerInput) {
         mathAnswerInput.addEventListener('input', () => {
@@ -611,7 +645,11 @@ function setupSpeechRecognition() {
         if (currentSubject === 'deutsch') {
             const targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
             if (combinedTranscript.includes(targetWord)) {
-                nextWord();
+                if (currentPackage.id === 'paket_huerdenlauf') {
+                    triggerHurdleJump();
+                } else {
+                    nextWord();
+                }
             }
         } else if (currentSubject === 'mathe') {
             const targetNum = currentPackage.items[wordIndex].a;
@@ -752,6 +790,17 @@ function showWord() {
             } else {
                 currentWordEl.textContent = displayWord.replace(/\|/g, '');
             }
+            
+            const hurdleTrack = document.getElementById('hurdle-track');
+            if (hurdleTrack) {
+                if (currentPackage.id === 'paket_huerdenlauf') {
+                    hurdleTrack.style.display = 'block';
+                    resetHurdle();
+                } else {
+                    hurdleTrack.style.display = 'none';
+                    clearTimeout(window.hurdleTimeout);
+                }
+            }
         } else if (currentSubject === 'mathe') {
             let questionText = currentPackage.items[wordIndex].q;
             const learnToggle = document.getElementById('math-learn-toggle');
@@ -833,7 +882,87 @@ function showWord() {
     }
 }
 
-function nextWord() {
+window.hurdleTimeout = null;
+window.hurdleResolved = false;
+
+function resetHurdle() {
+    window.hurdleResolved = false;
+    clearTimeout(window.hurdleTimeout);
+    const runner = document.getElementById('hurdle-runner');
+    const obstacle = document.getElementById('hurdle-obstacle');
+    if (!runner || !obstacle) return;
+    
+    runner.style.transition = 'none';
+    runner.style.left = '10px';
+    runner.style.bottom = '-5px';
+    runner.style.transform = 'none';
+    
+    obstacle.style.transition = 'none';
+    obstacle.style.transform = 'none';
+    
+    // Start running after a tiny delay to ensure CSS applies
+    setTimeout(() => {
+        if (!isTrainingActive || currentPackage.id !== 'paket_huerdenlauf') return;
+        runner.style.transition = 'left 2.5s linear';
+        runner.style.left = 'calc(100% - 90px)'; // Reach hurdle
+        
+        window.hurdleTimeout = setTimeout(() => {
+            if (!window.hurdleResolved) triggerHurdleCrash();
+        }, 2500);
+    }, 50);
+}
+
+function triggerHurdleJump() {
+    if (window.hurdleResolved) return;
+    window.hurdleResolved = true;
+    clearTimeout(window.hurdleTimeout);
+    
+    const runner = document.getElementById('hurdle-runner');
+    if (!runner) return;
+    
+    runner.style.transition = 'left 0.8s linear, bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) alternate 2';
+    runner.style.left = 'calc(100% + 50px)'; // Run off screen
+    runner.style.bottom = '60px'; // Peak of jump
+    
+    setTimeout(() => {
+        if (runner) runner.style.bottom = '-5px'; // Land
+    }, 400);
+
+    setTimeout(() => {
+        nextWord(false);
+    }, 800);
+}
+
+function triggerHurdleCrash() {
+    if (window.hurdleResolved) return;
+    window.hurdleResolved = true;
+    clearTimeout(window.hurdleTimeout);
+    
+    const runner = document.getElementById('hurdle-runner');
+    const obstacle = document.getElementById('hurdle-obstacle');
+    if (runner) {
+        runner.style.transition = 'transform 0.3s, bottom 0.3s';
+        runner.style.transform = 'rotate(70deg)';
+        runner.style.bottom = '-15px';
+    }
+    if (obstacle) {
+        obstacle.style.transition = 'transform 0.3s';
+        obstacle.style.transformOrigin = 'bottom right';
+        obstacle.style.transform = 'rotate(90deg)';
+    }
+    
+    const targetWord = currentPackage.words[wordIndex];
+    if (!failedTasks.some(t => t.q === targetWord)) {
+        failedTasks.push({ q: targetWord, a: '' });
+    }
+    currentPackage.words.push(targetWord);
+    
+    setTimeout(() => {
+        nextWord(true); // true = skip pushing again
+    }, 1200);
+}
+
+function nextWord(wasCrash = false) {
     if (currentSubject === 'deutsch' && (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein')) {
         const duration = Date.now() - currentWordStartTime;
         // Wenn das Kind länger als 2.5 Sekunden braucht, wird der Buchstabe hinten wieder drangehängt.
@@ -947,8 +1076,65 @@ function showResults(currentSeconds, currentSpb) {
         if (failedContainer) failedContainer.style.display = 'none';
     }
     
+    const btnRestart = document.getElementById('btn-restart-level');
+    const btnBackHome = document.getElementById('btn-back-home');
+    
+    if (currentPackage.id === 'paket_huerdenlauf' && failedTasks.length > 0) {
+        if (failedContainer) failedContainer.style.display = 'none'; // Hide default list
+        btnRestart.textContent = "Zur Auswertung ➔";
+        btnRestart.onclick = () => startReviewSession();
+        btnBackHome.style.display = "none";
+    } else {
+        btnRestart.textContent = "Nochmal spielen";
+        btnRestart.onclick = () => startTraining(currentPackage.id);
+        btnBackHome.style.display = "block";
+    }
+    
     renderPackages();
     showScreen('result');
+}
+
+let reviewQueue = [];
+
+window.startReviewSession = function() {
+    reviewQueue = [...failedTasks];
+    showNextReviewLetter();
+}
+
+window.showNextReviewLetter = function() {
+    if (reviewQueue.length === 0) {
+        showScreen('start');
+        return;
+    }
+    
+    const task = reviewQueue.shift();
+    const letter = task.q.toUpperCase();
+    
+    document.getElementById('review-letter').textContent = letter;
+    const wordsContainer = document.getElementById('review-words');
+    wordsContainer.innerHTML = '';
+    
+    if (letterDictionary[letter]) {
+        letterDictionary[letter].forEach(entry => {
+            const row = document.createElement('div');
+            row.style.fontSize = '2rem';
+            row.style.background = '#F3F4F6';
+            row.style.padding = '12px 24px';
+            row.style.borderRadius = '16px';
+            row.style.display = 'flex';
+            row.style.alignItems = 'center';
+            row.style.fontWeight = 'bold';
+            row.style.color = '#1F2937';
+            row.textContent = entry;
+            wordsContainer.appendChild(row);
+        });
+    } else {
+        wordsContainer.innerHTML = '<div style="font-size: 1.5rem;">Keine Beispiele.</div>';
+    }
+    
+    document.getElementById('btn-next-review').onclick = showNextReviewLetter;
+    
+    showScreen('review');
 }
 
 function triggerConfetti() {
