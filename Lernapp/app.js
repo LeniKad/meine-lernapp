@@ -15,6 +15,9 @@ const wordPackages = [
     { id: 'paket_abc_gross', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
     { id: 'paket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
     { id: 'paket_huerdenlauf', level: 'Spiel', title: 'Hür|den|lauf (ABC)', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
+    { id: 'paket_huerdenlauf_schwer', level: 'Spiel', title: 'Hür|den|lauf (Schwer)', words: ['W', 'w', 'P', 'p', 'H', 'h', 'K', 'k', 'Sp', 'sp', 'St', 'st', 'Sch', 'sch'] },
+    { id: 'paket_stolpersteine', level: 'Spe|zi|al', title: 'Stol|per|steine', words: ['Spin|ne', 'Stein', 'Schuh', 'Kro|ko|dil', 'Haus', 'Wel|len', 'Pin|guin', 'Spu|cken', 'Sta|chel', 'Schlan|ge', 'Hals', 'Was|ser'] },
+    { id: 'paket_krokodil', level: 'Spiel', title: 'Kro|ko|dil-Mo|dus (H/K)', words: ['k', 'h', 'K', 'H', 'k', 'H', 'h', 'K'] },
     { id: 'paket_lesetexte', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
 
@@ -26,28 +29,31 @@ const letterDictionary = {
     'E': ['🐘 Elefant', '🍓 Erdbeere', '🦆 Ente'],
     'F': ['🐟 Fisch', '🐸 Frosch', '🦊 Fuchs'],
     'G': ['🦒 Giraffe', '🎸 Gitarre', '🎁 Geschenk'],
-    'H': ['🐶 Hund', '🚁 Hubschrauber', '🏠 Haus'],
+    'H': ['🏠 Haus (Leiter)', '🦒 Hals', '🐶 Hund'],
     'I': ['🦔 Igel', '🏝️ Insel', '💡 Idee'],
     'J': ['🐆 Jaguar', '👖 Jeans', '🪀 Jojo'],
-    'K': ['🐱 Katze', '🐪 Kamel', '👑 Krone'],
+    'K': ['🐊 Krokodil (offenes Maul)', '👑 Krone', '🐱 Katze'],
     'L': ['🦁 Löwe', '🍭 Lutscher', '🪜 Leiter'],
     'M': ['🐭 Maus', '🌙 Mond', '🏍️ Motorrad'],
     'N': ['🦛 Nashorn', '🍝 Nudeln', '🥜 Nuss'],
     'O': ['🐙 Oktopus', '🍊 Orange', '👂 Ohr'],
-    'P': ['🐼 Panda', '🍕 Pizza', '🍄 Pilz'],
+    'P': ['🎈 Pusten', '🐧 Pinguin', '🍕 Pizza'],
     'Q': ['🪼 Qualle', '🐸 Quak', '⬜ Quadrat'],
     'R': ['🚀 Rakete', '🌹 Rose', '🌧️ Regen'],
     'S': ['☀️ Sonne', '🚢 Schiff', '🐍 Schlange'],
     'T': ['🐯 Tiger', '🍅 Tomate', '🚜 Traktor'],
     'U': ['🦉 Uhu', '🕰️ Uhr', '🛸 UFO'],
     'V': ['🐦 Vogel', '🌋 Vulkan', '🧛 Vampir'],
-    'W': ['🐳 Wal', '☁️ Wolke', '🐺 Wolf'],
+    'W': ['🌊 Wellen', '🍉 Wassermelone', '☁️ Wolke'],
     'X': ['🎷 Xylophon'],
     'Y': ['🧘 Yoga', '🛥️ Yacht'],
     'Z': ['🦓 Zebra', '🍋 Zitrone', '⛺ Zelt'],
     'Ä': ['🍏 Äpfel', '🌿 Äste'],
     'Ö': ['🛢️ Öl', '🚪 Öffnen'],
-    'Ü': ['🎁 Überraschung']
+    'Ü': ['🎁 Überraschung'],
+    'SP': ['🕷️ Spinne', '🍝 Spaghetti', '👻 Spuk'],
+    'ST': ['🪨 Stein', '🌵 Stachel', '🌟 Stern'],
+    'SCH': ['🐍 Schlange', '🚂 Lokomotive (Sch-sch-sch)', '👞 Schuh']
 };
 
 function generateMathPackages() {
@@ -245,9 +251,15 @@ function handleAnswerSubmission(isExplicitSubmit) {
     
     if (!currentVal) return;
 
-    const isCorrect = currentSubject === 'mathe' 
+    let isCorrect = currentSubject === 'mathe' 
         ? currentVal.replace(/\s+/g, '') === targetTxt.toString().toLowerCase()
         : currentVal === targetTxt.toString().toLowerCase();
+
+    if (currentSubject === 'deutsch' && currentPackage.id === 'paket_krokodil') {
+        const t = targetTxt.toLowerCase();
+        if (t === 'k') isCorrect = currentVal === 'krokodil';
+        if (t === 'h') isCorrect = currentVal === 'haus' || currentVal === 'hals' || currentVal === 'hoch';
+    }
 
     if (isCorrect) {
         // Richtig
@@ -643,9 +655,16 @@ function setupSpeechRecognition() {
         const combinedTranscript = (finalTranscript + ' ' + interimTranscript).toLowerCase().trim();
         
         if (currentSubject === 'deutsch') {
-            const targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
-            if (combinedTranscript.includes(targetWord)) {
-                if (currentPackage.id === 'paket_huerdenlauf') {
+            let targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
+            let isCorrect = combinedTranscript.includes(targetWord);
+            
+            if (currentPackage.id === 'paket_krokodil') {
+                if (targetWord === 'k') isCorrect = combinedTranscript.includes('krokodil');
+                if (targetWord === 'h') isCorrect = combinedTranscript.includes('haus') || combinedTranscript.includes('hals') || combinedTranscript.includes('hoch');
+            }
+
+            if (isCorrect) {
+                if (currentPackage.id.startsWith('paket_huerdenlauf')) {
                     triggerHurdleJump();
                 } else {
                     nextWord();
@@ -793,7 +812,7 @@ function showWord() {
             
             const hurdleTrack = document.getElementById('hurdle-track');
             if (hurdleTrack) {
-                if (currentPackage.id === 'paket_huerdenlauf') {
+                if (currentPackage.id.startsWith('paket_huerdenlauf')) {
                     hurdleTrack.style.display = 'block';
                     resetHurdle();
                 } else {
@@ -902,7 +921,7 @@ function resetHurdle() {
     
     // Start running after a tiny delay to ensure CSS applies
     setTimeout(() => {
-        if (!isTrainingActive || currentPackage.id !== 'paket_huerdenlauf') return;
+        if (!isTrainingActive || !currentPackage.id.startsWith('paket_huerdenlauf')) return;
         runner.style.transition = 'left 2.5s linear';
         runner.style.left = 'calc(100% - 90px)'; // Reach hurdle
         
@@ -1079,7 +1098,7 @@ function showResults(currentSeconds, currentSpb) {
     const btnRestart = document.getElementById('btn-restart-level');
     const btnBackHome = document.getElementById('btn-back-home');
     
-    if (currentPackage.id === 'paket_huerdenlauf' && failedTasks.length > 0) {
+    if (currentPackage.id.startsWith('paket_huerdenlauf') && failedTasks.length > 0) {
         if (failedContainer) failedContainer.style.display = 'none'; // Hide default list
         btnRestart.textContent = "Zur Auswertung ➔";
         btnRestart.onclick = () => startReviewSession();
