@@ -481,6 +481,11 @@ function renderPackages() {
             }
         }
         
+        const playCount = parseInt(localStorage.getItem(`blitzlesen_${pkg.id}_count`) || '0');
+        if (playCount > 0) {
+            statsHtml += `<div style="font-size: 0.85rem; color: #6B7280; margin-top: 4px; font-weight: bold;">🔄 ${playCount}x geübt</div>`;
+        }
+        
         let previewTxt = '';
         if(currentSubject === 'deutsch'){
             previewTxt = pkg.words.slice(0, 3).join(', ').replace(/\|/g, '') + '...';
@@ -1107,6 +1112,15 @@ function showResults(currentSeconds, currentSpb) {
     let isNewBest = false;
     let showEdgeCaseFeedback = false;
     
+    const storageKeyCount = `blitzlesen_${currentPackage.id}_count`;
+    let playCount = parseInt(localStorage.getItem(storageKeyCount) || '0');
+    
+    // In finishTraining wird es nicht erhöht, wir machen es hier:
+    // Wait, let's just make sure we only increase it once per finish.
+    // I'll increment it here in showResults.
+    playCount++;
+    localStorage.setItem(storageKeyCount, playCount);
+
     if (currentSubject === 'deutsch') {
         resSpbCard.style.display = 'block';
         resSpb.textContent = currentSpb.toFixed(2);
@@ -1136,6 +1150,9 @@ function showResults(currentSeconds, currentSpb) {
         }
     }
     
+    // IMMER Konfetti (Motivation ist wichtig bei LRS)
+    triggerConfetti(isNewBest ? 3000 : 1000); 
+    
     if (isNewBest) {
         localStorage.setItem(storageKey, JSON.stringify({
             time: currentSeconds,
@@ -1143,16 +1160,16 @@ function showResults(currentSeconds, currentSpb) {
             date: new Date().toISOString()
         }));
         
-        triggerConfetti();
-        
         if (showEdgeCaseFeedback) {
             feedbackMsg.textContent = "Wahnsinn! Du hast zwar länger gebraucht, weil die Wörter riiiesig waren, aber deine Lesegeschwindigkeit pro Buchstabe ist eigentlich sogar SCHNELLER geworden!";
-            feedbackMsg.classList.remove('hidden');
         } else {
-            feedbackMsg.textContent = currentSubject === 'deutsch' ? "🎉 Neuer Highscore bei der Lesegeschwindigkeit! Weiter so!" : "🎉 Neue Bestzeit beim Einmaleins! Super gemacht!";
-            feedbackMsg.classList.remove('hidden');
+            feedbackMsg.textContent = "🎉 Neuer Highscore! Du bist super schnell geworden!";
         }
+    } else {
+        // Kein Highscore, aber trotzdem loben!
+        feedbackMsg.textContent = `Klasse! Du hast das Paket schon ${playCount}x geübt! Je öfter du übst, desto schneller wird dein Gehirn.`;
     }
+    feedbackMsg.classList.remove('hidden');
     
     const failedContainer = document.getElementById('failed-tasks-container');
     const failedList = document.getElementById('failed-tasks-list');
@@ -1233,9 +1250,9 @@ window.showNextReviewLetter = function() {
     showScreen('review');
 }
 
-function triggerConfetti() {
+function triggerConfetti(durationParam = 3000) {
     if (typeof confetti === 'function') {
-        const duration = 3000;
+        const duration = durationParam;
         const end = Date.now() + duration;
 
         (function frame() {
