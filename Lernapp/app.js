@@ -662,6 +662,16 @@ function setupSpeechRecognition() {
                 if (targetWord === 'k') isCorrect = combinedTranscript.includes('krokodil');
                 if (targetWord === 'h') isCorrect = combinedTranscript.includes('haus') || combinedTranscript.includes('hals') || combinedTranscript.includes('hoch');
             }
+            
+            if (currentPackage.id === 'paket_huerdenlauf_schwer') {
+                if (targetWord === 'w') isCorrect = combinedTranscript.includes('w') || combinedTranscript.includes('wellen') || combinedTranscript.includes('wasser');
+                if (targetWord === 'p') isCorrect = combinedTranscript.includes('p') || combinedTranscript.includes('pinguin') || combinedTranscript.includes('pusten');
+                if (targetWord === 'h') isCorrect = combinedTranscript.includes('h') || combinedTranscript.includes('haus') || combinedTranscript.includes('hund') || combinedTranscript.includes('hoch');
+                if (targetWord === 'k') isCorrect = combinedTranscript.includes('k') || combinedTranscript.includes('krokodil') || combinedTranscript.includes('katze');
+                if (targetWord === 'sp') isCorrect = combinedTranscript.includes('sp') || combinedTranscript.includes('schp') || combinedTranscript.includes('spinne') || combinedTranscript.includes('spuk');
+                if (targetWord === 'st') isCorrect = combinedTranscript.includes('st') || combinedTranscript.includes('scht') || combinedTranscript.includes('stein') || combinedTranscript.includes('stachel');
+                if (targetWord === 'sch') isCorrect = combinedTranscript.includes('sch') || combinedTranscript.includes('schlange') || combinedTranscript.includes('schuh');
+            }
 
             if (isCorrect) {
                 if (currentPackage.id.startsWith('paket_huerdenlauf')) {
