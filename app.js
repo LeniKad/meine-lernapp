@@ -654,6 +654,10 @@ function setupSpeechRecognition() {
 
         const combinedTranscript = (finalTranscript + ' ' + interimTranscript).toLowerCase().trim();
         
+        if (combinedTranscript && micStatus) {
+            micStatus.textContent = "🎙️ " + combinedTranscript;
+        }
+        
         if (currentSubject === 'deutsch') {
             let targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
             let isCorrect = combinedTranscript.includes(targetWord);
@@ -818,6 +822,10 @@ function showWord() {
                 currentWordEl.innerHTML = colorizeSyllables(displayWord);
             } else {
                 currentWordEl.textContent = displayWord.replace(/\|/g, '');
+            }
+            
+            if (currentInputMode === 'mic' && micStatus) {
+                micStatus.textContent = "🎙️ Hör zu...";
             }
             
             const hurdleTrack = document.getElementById('hurdle-track');
