@@ -200,6 +200,7 @@ let isTrainingActive = false;
 let currentInputMode = 'mic';
 let currentAttempts = 0;
 let failedTasks = [];
+let wordStats = [];
 let currentWordStartTime = 0;
 let useBlitzlicht = localStorage.getItem('blitzlesen_useBlitzlicht') === 'true' || false;
 let blitzTimeout = null;
@@ -753,6 +754,10 @@ function setupSpeechRecognition() {
 
 // --- Training Logic ---
 function startTraining(packageId) {
+    wordStats = [];
+    failedTasks = [];
+    currentAttempts = 0;
+    
     if (packageId === 'paket_lesetexte') {
         initReadingMode();
         return;
@@ -1049,12 +1054,25 @@ function triggerHurdleCrash() {
 
 function nextWord(wasCrash = false) {
     if (currentSubject === 'deutsch') {
-        const duration = Date.now() - currentWordStartTime;
-        if (duration > 2500) {
+        const durationMs = Date.now() - currentWordStartTime;
+        const durationSec = durationMs / 1000;
+        const targetWord = currentPackage.words[wordIndex];
+        const cleanWord = targetWord.replace(/\|/g, '');
+        const wordSpb = durationSec / cleanWord.length;
+        
+        // Track stats
+        const existing = wordStats.find(w => w.word === cleanWord);
+        if (existing) {
+            existing.spb = wordSpb;
+            existing.time = durationSec;
+        } else {
+            wordStats.push({ word: cleanWord, spb: wordSpb, time: durationSec });
+        }
+
+        if (durationMs > 2500) {
             if (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein') {
                 currentPackage.words.push(currentPackage.words[wordIndex]);
             } else if (currentPackage.id.startsWith('paket_stolper')) {
-                const targetWord = currentPackage.words[wordIndex];
                 currentPackage.words.push(targetWord);
                 if (!failedTasks.some(t => t.q === targetWord)) {
                     failedTasks.push({ q: targetWord, a: '' });
@@ -1170,6 +1188,28 @@ function showResults(currentSeconds, currentSpb) {
         feedbackMsg.textContent = `Klasse! Du hast das Paket schon ${playCount}x geübt! Je öfter du übst, desto schneller wird dein Gehirn.`;
     }
     feedbackMsg.classList.remove('hidden');
+    
+    const statsContainer = document.getElementById('word-stats-container');
+    const statsList = document.getElementById('word-stats-list');
+    
+    if (currentSubject === 'deutsch' && wordStats.length > 0) {
+        wordStats.sort((a, b) => b.spb - a.spb);
+        let listHtml = '';
+        wordStats.forEach(item => {
+            let color = '#10B981'; // Grün
+            if (item.spb > 0.8) color = '#EF4444'; // Rot
+            else if (item.spb > 0.4) color = '#F59E0B'; // Orange
+            
+            listHtml += `<li style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #E5E7EB;">
+                <span>${item.word}</span>
+                <span style="color: ${color}; font-weight: bold;">${item.spb.toFixed(2)} spB</span>
+            </li>`;
+        });
+        if (statsList) statsList.innerHTML = listHtml;
+        if (statsContainer) statsContainer.style.display = 'block';
+    } else {
+        if (statsContainer) statsContainer.style.display = 'none';
+    }
     
     const failedContainer = document.getElementById('failed-tasks-container');
     const failedList = document.getElementById('failed-tasks-list');
