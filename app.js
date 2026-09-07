@@ -16,8 +16,8 @@ const wordPackages = [
     { id: 'paket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
     { id: 'paket_huerdenlauf', level: 'Spiel', title: 'Hür|den|lauf (ABC)', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
     { id: 'paket_huerdenlauf_schwer', level: 'Spiel', title: 'Hür|den|lauf (Schwer)', words: ['W', 'w', 'P', 'p', 'H', 'h', 'K', 'k', 'Sp', 'sp', 'St', 'st', 'Sch', 'sch'] },
-    { id: 'paket_stolpersteine', level: 'Spe|zi|al', title: 'Stol|per|steine', words: ['Spin|ne', 'Stein', 'Schuh', 'Kro|ko|dil', 'Haus', 'Wel|len', 'Pin|guin', 'Spu|cken', 'Sta|chel', 'Schlan|ge', 'Hals', 'Was|ser'] },
-    { id: 'paket_krokodil', level: 'Spiel', title: 'Kro|ko|dil-Mo|dus (H/K)', words: ['k', 'h', 'K', 'H', 'k', 'H', 'h', 'K'] },
+    { id: 'paket_stolpersteine', level: 'Spe|zi|al', title: 'Stol|per|steine', words: ['Spin|ne', 'Stein', 'Schuh', 'Kro|ko|dil', 'Haus', 'Wel|len', 'Pin|guin', 'Spu|cken', 'Sta|chel', 'Schlan|ge', 'Hals', 'Was|ser', 'Kat|ze', 'klein', 'kalt', 'kom|men', 'Hund', 'hoch', 'hel|fen', 'Spa|ten'] },
+    { id: 'paket_stolper_buchstaben', level: 'Spe|zi|al', title: 'Stol|per (Buch|sta|ben)', words: ['W', 'w', 'H', 'h', 'K', 'k', 'Sp', 'Sch', 'sch', 'St', 'st'] },
     { id: 'paket_lesetexte', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
 
@@ -51,9 +51,32 @@ const letterDictionary = {
     'Ä': ['🍏 Äpfel', '🌿 Äste'],
     'Ö': ['🛢️ Öl', '🚪 Öffnen'],
     'Ü': ['🎁 Überraschung'],
-    'SP': ['🕷️ Spinne', '🍝 Spaghetti', '👻 Spuk'],
+    'SP': ['⛏️ Spaten', '🕷️ Spinne', '👻 Spuk'],
     'ST': ['🪨 Stein', '🌵 Stachel', '🌟 Stern'],
     'SCH': ['🐍 Schlange', '🚂 Lokomotive (Sch-sch-sch)', '👞 Schuh']
+};
+
+const wordDictionary = {
+    'spinne': '🕷️ Spinne',
+    'stein': '🪨 Stein',
+    'schuh': '👞 Schuh',
+    'krokodil': '🐊 Krokodil',
+    'haus': '🏠 Haus',
+    'wellen': '🌊 Wellen',
+    'pinguin': '🐧 Pinguin',
+    'spucken': '💦 Spucken',
+    'stachel': '🌵 Stachel',
+    'schlange': '🐍 Schlange',
+    'hals': '🦒 Hals',
+    'wasser': '💧 Wasser',
+    'katze': '🐱 Katze',
+    'klein': '🤏 klein',
+    'kalt': '🧊 kalt',
+    'kommen': '🚶 kommen',
+    'hund': '🐶 Hund',
+    'hoch': '🏔️ hoch',
+    'helfen': '🤝 helfen',
+    'spaten': '⛏️ Spaten'
 };
 
 function generateMathPackages() {
@@ -1000,11 +1023,18 @@ function triggerHurdleCrash() {
 }
 
 function nextWord(wasCrash = false) {
-    if (currentSubject === 'deutsch' && (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein')) {
+    if (currentSubject === 'deutsch') {
         const duration = Date.now() - currentWordStartTime;
-        // Wenn das Kind länger als 2.5 Sekunden braucht, wird der Buchstabe hinten wieder drangehängt.
         if (duration > 2500) {
-            currentPackage.words.push(currentPackage.words[wordIndex]);
+            if (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein') {
+                currentPackage.words.push(currentPackage.words[wordIndex]);
+            } else if (currentPackage.id.startsWith('paket_stolper')) {
+                const targetWord = currentPackage.words[wordIndex];
+                currentPackage.words.push(targetWord);
+                if (!failedTasks.some(t => t.q === targetWord)) {
+                    failedTasks.push({ q: targetWord, a: '' });
+                }
+            }
         }
     }
 
@@ -1116,7 +1146,7 @@ function showResults(currentSeconds, currentSpb) {
     const btnRestart = document.getElementById('btn-restart-level');
     const btnBackHome = document.getElementById('btn-back-home');
     
-    if (currentPackage.id.startsWith('paket_huerdenlauf') && failedTasks.length > 0) {
+    if ((currentPackage.id.startsWith('paket_huerdenlauf') || currentPackage.id.startsWith('paket_stolper')) && failedTasks.length > 0) {
         if (failedContainer) failedContainer.style.display = 'none'; // Hide default list
         btnRestart.textContent = "Zur Auswertung ➔";
         btnRestart.onclick = () => startReviewSession();
@@ -1145,14 +1175,23 @@ window.showNextReviewLetter = function() {
     }
     
     const task = reviewQueue.shift();
-    const letter = task.q.toUpperCase();
+    const cleanWord = task.q.replace(/\|/g, '');
+    const isLetter = cleanWord.length <= 3;
+    const lookupKey = isLetter ? cleanWord.toUpperCase() : cleanWord.toLowerCase();
     
-    document.getElementById('review-letter').textContent = letter;
+    document.getElementById('review-letter').textContent = cleanWord;
     const wordsContainer = document.getElementById('review-words');
     wordsContainer.innerHTML = '';
     
-    if (letterDictionary[letter]) {
-        letterDictionary[letter].forEach(entry => {
+    let entries = [];
+    if (isLetter && letterDictionary[lookupKey]) {
+        entries = letterDictionary[lookupKey];
+    } else if (!isLetter && wordDictionary[lookupKey]) {
+        entries = [wordDictionary[lookupKey]];
+    }
+    
+    if (entries.length > 0) {
+        entries.forEach(entry => {
             const row = document.createElement('div');
             row.style.fontSize = '2rem';
             row.style.background = '#F3F4F6';
