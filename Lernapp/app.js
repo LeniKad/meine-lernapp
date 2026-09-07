@@ -201,6 +201,8 @@ let currentInputMode = 'mic';
 let currentAttempts = 0;
 let failedTasks = [];
 let currentWordStartTime = 0;
+let useBlitzlicht = localStorage.getItem('blitzlesen_useBlitzlicht') === 'true' || false;
+let blitzTimeout = null;
 
 // --- DOM Elements ---
 const screens = {
@@ -257,6 +259,15 @@ function init() {
         mathAnswerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             handleAnswerSubmission(true);
+        });
+    }
+    
+    const blitzToggle = document.getElementById('deutsch-blitz-toggle');
+    if (blitzToggle) {
+        blitzToggle.checked = useBlitzlicht;
+        blitzToggle.addEventListener('change', (e) => {
+            useBlitzlicht = e.target.checked;
+            localStorage.setItem('blitzlesen_useBlitzlicht', useBlitzlicht);
         });
     }
 }
@@ -447,9 +458,11 @@ function renderPackages() {
     const mathOptions = document.getElementById('math-options-container');
     const englishOptions = document.getElementById('english-options-container');
     const createVocab = document.getElementById('create-vocab-container');
+    const deutschOptions = document.getElementById('deutsch-options-container');
     
     if (mathOptions) mathOptions.style.display = (currentSubject === 'mathe') ? 'flex' : 'none';
     if (englishOptions) englishOptions.style.display = (currentSubject === 'englisch') ? 'flex' : 'none';
+    if (deutschOptions) deutschOptions.style.display = (currentSubject === 'deutsch') ? 'flex' : 'none';
     if (createVocab) createVocab.style.display = (currentSubject === 'englisch') ? 'block' : 'none';
 
     packagesContainer.innerHTML = '';
@@ -845,6 +858,13 @@ function showWord() {
                 currentWordEl.innerHTML = colorizeSyllables(displayWord);
             } else {
                 currentWordEl.textContent = displayWord.replace(/\|/g, '');
+            }
+            
+            clearTimeout(blitzTimeout);
+            if (useBlitzlicht) {
+                blitzTimeout = setTimeout(() => {
+                    if (isTrainingActive) currentWordEl.innerHTML = '👁️';
+                }, 1000);
             }
             
             if (currentInputMode === 'mic' && micStatus) {
