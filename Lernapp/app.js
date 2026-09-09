@@ -577,6 +577,8 @@ function renderPackages() {
         const playCount = parseInt(localStorage.getItem(`blitzlesen_${pkg.id}_count`) || '0');
         if (playCount > 0) {
             statsHtml += `<div style="font-size: 0.85rem; color: #6B7280; margin-top: 4px; font-weight: bold;">🔄 ${playCount}x geübt</div>`;
+        } else {
+            statsHtml += `<div style="font-size: 0.85rem; color: #9CA3AF; margin-top: 4px; font-weight: normal;">🔄 Noch nicht geübt</div>`;
         }
         
         let previewTxt = '';
@@ -715,7 +717,12 @@ window.prevChapter = function() {
 window.finishReading = function() {
     localStorage.setItem('leseabenteuer_chapter', currentChapterIndex + 1);
     localStorage.setItem(`lastCompleted_paket_lesetexte`, new Date().toISOString());
-    openSubject('deutsch');
+    
+    let playCount = parseInt(localStorage.getItem(`blitzlesen_paket_lesetexte_count`) || '0');
+    localStorage.setItem(`blitzlesen_paket_lesetexte_count`, playCount + 1);
+    
+    triggerConfetti(2000);
+    setTimeout(() => openSubject('deutsch'), 2500);
 }
 
 window.printReading = function() {
