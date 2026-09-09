@@ -211,7 +211,8 @@ const mathPackages = generateMathPackages();
 let englishPackages = JSON.parse(localStorage.getItem('custom_english_packages') || '[]');
 let isMultipleChoice = false;
 let currentEnglishDir = 'de-en';
-let currentSubject = 'deutsch'; 
+let currentSubject = 'deutsch';
+let currentCategory = null; 
 let currentPackage = null;
 let wordIndex = 0;
 let startTime = 0;
@@ -448,6 +449,7 @@ window.handleMCAnswer = function(btn, selectedVal, targetAns) {
 
 window.openSubject = function(subject) {
     currentSubject = subject;
+    currentCategory = null;
     
     // Dynamic Header Text
     const titleEl = document.getElementById('subject-header-title');
@@ -487,15 +489,53 @@ function renderPackages() {
     if (createVocab) createVocab.style.display = (currentSubject === 'englisch') ? 'block' : 'none';
 
     packagesContainer.innerHTML = '';
-    const activePackages = currentSubject === 'deutsch' ? wordPackages : (currentSubject === 'mathe' ? mathPackages : englishPackages);
     
-    // Create fragments for categories
-    const categories = {
-        'Wortpakete': document.createDocumentFragment(),
-        'LRS': document.createDocumentFragment(),
-        'Geschichten': document.createDocumentFragment(),
-        'default': document.createDocumentFragment()
-    };
+    if (currentSubject === 'deutsch' && !currentCategory) {
+        const folders = [
+            { id: 'Wortpakete', icon: '📁', title: 'Grundwortschatz', desc: 'Die häufigsten Wörter (Paket 1 - 12)' },
+            { id: 'LRS', icon: '🧩', title: 'LRS & Stolpersteine', desc: 'Gezieltes Training für schwere Laute' },
+            { id: 'Geschichten', icon: '📖', title: 'Geschichten', desc: 'Zusammenhängende Texte lesen' }
+        ];
+        
+        folders.forEach(folder => {
+            const card = document.createElement('div');
+            card.className = 'package-card';
+            card.style.textAlign = 'center';
+            card.style.padding = '32px 16px';
+            card.style.cursor = 'pointer';
+            card.innerHTML = `
+                <div style="font-size: 3rem; margin-bottom: 12px;">${folder.icon}</div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: #1F2937;">${folder.title}</div>
+                <div style="color: #6B7280; margin-top: 8px;">${folder.desc}</div>
+            `;
+            card.onclick = () => {
+                currentCategory = folder.id;
+                renderPackages();
+            };
+            packagesContainer.appendChild(card);
+        });
+        return;
+    }
+    
+    if (currentSubject === 'deutsch' && currentCategory) {
+        const backBtn = document.createElement('button');
+        backBtn.className = 'btn-secondary';
+        backBtn.style.gridColumn = '1 / -1';
+        backBtn.style.marginBottom = '16px';
+        backBtn.style.justifySelf = 'start';
+        backBtn.innerHTML = '⬅️ Zurück zur Ordner-Übersicht';
+        backBtn.onclick = () => {
+            currentCategory = null;
+            renderPackages();
+        };
+        packagesContainer.appendChild(backBtn);
+    }
+    
+    let activePackages = currentSubject === 'deutsch' ? wordPackages : (currentSubject === 'mathe' ? mathPackages : englishPackages);
+    
+    if (currentSubject === 'deutsch' && currentCategory) {
+        activePackages = activePackages.filter(p => p.category === currentCategory);
+    }
     
     activePackages.forEach(pkg => {
         const bestDataRaw = localStorage.getItem(`blitzlesen_${pkg.id}`);
@@ -565,39 +605,8 @@ function renderPackages() {
         }
         
         card.onclick = () => startTraining(pkg.id);
-        
-        if (currentSubject === 'deutsch' && pkg.category && categories[pkg.category]) {
-            categories[pkg.category].appendChild(card);
-        } else {
-            categories['default'].appendChild(card);
-        }
+        packagesContainer.appendChild(card);
     });
-
-    if (currentSubject === 'deutsch') {
-        if (categories['Wortpakete'].childNodes.length > 0) {
-            const header = document.createElement('h2');
-            header.style.cssText = 'grid-column: 1 / -1; margin-top: 10px; color: var(--primary); font-size: 1.5rem;';
-            header.textContent = '📁 Grundwortschatz';
-            packagesContainer.appendChild(header);
-            packagesContainer.appendChild(categories['Wortpakete']);
-        }
-        if (categories['LRS'].childNodes.length > 0) {
-            const header = document.createElement('h2');
-            header.style.cssText = 'grid-column: 1 / -1; margin-top: 20px; color: #EF4444; font-size: 1.5rem; border-top: 2px dashed #FECACA; padding-top: 20px;';
-            header.textContent = '🧩 LRS & Stolpersteine';
-            packagesContainer.appendChild(header);
-            packagesContainer.appendChild(categories['LRS']);
-        }
-        if (categories['Geschichten'].childNodes.length > 0) {
-            const header = document.createElement('h2');
-            header.style.cssText = 'grid-column: 1 / -1; margin-top: 20px; color: #10B981; font-size: 1.5rem; border-top: 2px dashed #A7F3D0; padding-top: 20px;';
-            header.textContent = '📖 Geschichten';
-            packagesContainer.appendChild(header);
-            packagesContainer.appendChild(categories['Geschichten']);
-        }
-    } else {
-        packagesContainer.appendChild(categories['default']);
-    }
 }
 
 // --- Reading Mode Logic ---
