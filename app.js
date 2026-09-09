@@ -868,11 +868,18 @@ function setupSpeechRecognition() {
     };
 }
 
+let showingSolution = false;
+let silbenIndex = 0;
+let currentSilben = [];
+
 // --- Training Logic ---
 function startTraining(packageId) {
     wordStats = [];
     failedTasks = [];
     currentAttempts = 0;
+    showingSolution = false;
+    silbenIndex = 0;
+    currentSilben = [];
     
     if (packageId === 'paket_lesetexte') {
         initReadingMode();
@@ -934,7 +941,7 @@ function startTraining(packageId) {
         if (packageId === 'paket_lrs_zwillinge') {
             currentInputMode = 'mc';
             isMultipleChoice = true;
-        } else if (packageId === 'paket_lrs_alien') {
+        } else if (packageId === 'paket_lrs_alien' || packageId === 'paket_lrs_silbenband' || packageId === 'paket_lrs_luecken') {
             currentInputMode = 'manual';
         }
     }
@@ -1032,23 +1039,9 @@ function showWord() {
                 let displayWord = currentPackage.words[wordIndex];
                 
                 if (currentPackage.id === 'paket_lrs_silbenband') {
-                    if (window.silbenTimeout) clearTimeout(window.silbenTimeout);
-                    let syllables = displayWord.split('|');
-                    let currentDisplay = '';
-                    currentWordEl.innerHTML = '';
-                    
-                    const showNextSyllable = (i) => {
-                        if (i < syllables.length) {
-                            currentDisplay += `<span class="s${(i % 2) + 1}">${syllables[i]}</span>`;
-                            currentWordEl.innerHTML = currentDisplay;
-                            window.silbenTimeout = setTimeout(() => showNextSyllable(i+1), 800);
-                        } else {
-                            window.silbenTimeout = setTimeout(() => {
-                               currentWordEl.innerHTML = displayWord.replace(/\|/g, ''); 
-                            }, 800);
-                        }
-                    };
-                    showNextSyllable(0);
+                    currentSilben = displayWord.split('|');
+                    silbenIndex = 0;
+                    currentWordEl.innerHTML = `<span class="s1">${currentSilben[0]}</span>`;
                 } else {
                     if (useSyllableColors) {
                         currentWordEl.innerHTML = colorizeSyllables(displayWord);
@@ -1151,20 +1144,37 @@ function showWord() {
 }
 
 
-let showingSolution = false;
-
 function nextWord(wasCrash = false) {
     if (currentSubject === 'deutsch' && currentPackage.id === 'paket_lrs_luecken' && !showingSolution) {
         showingSolution = true;
         currentWordEl.textContent = currentPackage.items[wordIndex].a;
-        currentWordEl.style.color = '#10B981'; // Green text to indicate success
+        currentWordEl.style.color = '#10B981'; // Green
         setTimeout(() => {
             showingSolution = false;
             currentWordEl.style.color = '';
             nextWord(wasCrash);
-        }, 1000);
+        }, 2000);
         return;
     }
+    
+    if (currentSubject === 'deutsch' && currentPackage.id === 'paket_lrs_silbenband') {
+        if (silbenIndex < currentSilben.length - 1) {
+            silbenIndex++;
+            let html = '';
+            for(let i = 0; i <= silbenIndex; i++) {
+                html += `<span class="s${(i % 2) + 1}">${currentSilben[i]}</span>`;
+            }
+            currentWordEl.innerHTML = html;
+            return;
+        } else if (silbenIndex === currentSilben.length - 1) {
+            silbenIndex++;
+            currentWordEl.innerHTML = currentSilben.join(''); // Full word
+            return;
+        }
+    }
+    
+    showingSolution = false;
+    currentWordEl.style.color = '';
     
     if (currentSubject === 'deutsch') {
         const durationMs = Date.now() - currentWordStartTime;
