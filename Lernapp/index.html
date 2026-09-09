@@ -41,6 +41,14 @@
                         <div class="pack-preview">Eigene Vokabeln...</div>
                     </div>
                 </div>
+                
+                <div style="margin-top: 40px; text-align: center; background: #F3F4F6; padding: 16px; border-radius: 12px;">
+                    <h3 style="margin-bottom: 12px; color: #374151;">⚙️ Fortschritt übertragen</h3>
+                    <div style="display: flex; gap: 12px; justify-content: center;">
+                        <button class="btn-secondary" onclick="exportData()" style="padding: 8px 16px; font-size: 1rem;">Exportieren</button>
+                        <button class="btn-secondary" onclick="importData()" style="padding: 8px 16px; font-size: 1rem;">Importieren</button>
+                    </div>
+                </div>
             </main>
         </section>
 
@@ -211,6 +219,22 @@
                 
                 <button class="btn-secondary" onclick="addVocabRow()" style="width: 100%; margin-bottom: 24px; border: 2px dashed #9CA3AF; color: #4B5563; background: transparent; font-weight: 700; font-size: 1.2rem;">+ Wortpaar hinzufügen</button>
                 <button class="btn-primary" onclick="saveVocabPackage()" style="width: 100%; background: #10B981; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);">💾 Liste speichern</button>
+            </main>
+        </section>
+        
+        <!-- Custom Deutsch Editor Screen -->
+        <section id="screen-custom-deutsch" class="screen">
+            <header style="position: relative; padding-top: 50px;">
+                <button class="btn-secondary" onclick="showScreen('start')" style="position: absolute; left: 0; top: 0; padding: 8px 16px; font-size: 1rem;">Abbrechen</button>
+                <h1 style="margin-top: 0;">Eigene Wörter</h1>
+            </header>
+            <main>
+                <input type="text" id="custom-de-title" placeholder="Name (z.B. Schulwörter)" style="font-size: 1.5rem; padding: 12px; width: 100%; border-radius: 12px; border: 2px solid #D1D5DB; margin-bottom: 24px; outline: none; font-family: 'Nunito', sans-serif; font-weight: 700;">
+                
+                <p style="text-align: left; margin-bottom: 12px; color: #4B5563; font-size: 1.1rem; font-weight: bold;">Trage hier alle Wörter ein (mit Komma getrennt):</p>
+                <textarea id="custom-de-words" placeholder="Baum, Schule, Katze, Auto..." style="width: 100%; height: 200px; padding: 12px; font-size: 1.2rem; border-radius: 12px; border: 2px solid #D1D5DB; margin-bottom: 24px; outline: none; font-family: 'Nunito', sans-serif; resize: vertical;"></textarea>
+                
+                <button class="btn-primary" onclick="saveCustomDeutschPackage()" style="width: 100%; background: #10B981; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);">💾 Paket speichern</button>
             </main>
         </section>
         

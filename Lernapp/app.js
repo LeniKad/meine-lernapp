@@ -1,5 +1,5 @@
 // --- Data: Word Packages ---
-const wordPackages = [
+let wordPackages = [
     { id: 'paket1', category: 'Wortpakete', level: 'Ein|fach 1', title: 'Pa|ket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
     { id: 'paket2', category: 'Wortpakete', level: 'Ein|fach 2', title: 'Pa|ket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
     { id: 'paket3', category: 'Wortpakete', level: 'Mit|tel 1', title: 'Pa|ket 3', words: ['sich', 'ein', 'ei|ne', 'a|ber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
@@ -445,6 +445,73 @@ window.saveVocabPackage = function() {
     openSubject('englisch');
 }
 
+window.saveCustomDeutschPackage = function() {
+    const title = document.getElementById('custom-de-title').value.trim();
+    if (!title) return alert("Bitte vergib einen Namen für das Paket.");
+    const wordsRaw = document.getElementById('custom-de-words').value;
+    // Split by comma or newline, trim, and filter out empty
+    const words = wordsRaw.split(/[,\\n]+/).map(w => w.trim()).filter(w => w.length > 0);
+    
+    if (words.length < 3) return alert("Bitte trage mindestens 3 Wörter ein.");
+    
+    const newPkg = {
+        id: 'custom_de_' + Date.now(),
+        category: 'LRS',
+        level: 'Eigene',
+        title: title,
+        words: words
+    };
+    
+    customDePackages.push(newPkg);
+    localStorage.setItem('custom_de_packages', JSON.stringify(customDePackages));
+    wordPackages.push(newPkg);
+    
+    document.getElementById('custom-de-title').value = '';
+    document.getElementById('custom-de-words').value = '';
+    openSubject('deutsch');
+    currentCategory = 'LRS';
+    renderPackages();
+}
+
+window.exportData = function() {
+    const dataToExport = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('blitzlesen_') || key.startsWith('custom_') || key.startsWith('lastCompleted_') || key === 'leseabenteuer_chapter') {
+            dataToExport[key] = localStorage.getItem(key);
+        }
+    }
+    const jsonStr = JSON.stringify(dataToExport);
+    const encoded = btoa(encodeURIComponent(jsonStr)); // Base64 for easier copy/pasting
+    
+    // Create a temporary textarea to copy from
+    const dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = encoded;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+    
+    alert("Export-Code wurde in die Zwischenablage kopiert! Schicke ihn dir selbst (z.B. per E-Mail oder WhatsApp) und füge ihn auf dem anderen Gerät bei 'Importieren' ein.");
+}
+
+window.importData = function() {
+    const code = prompt("Füge hier den Export-Code vom anderen Gerät ein:");
+    if (!code) return;
+    
+    try {
+        const jsonStr = decodeURIComponent(atob(code));
+        const data = JSON.parse(jsonStr);
+        for (const key in data) {
+            localStorage.setItem(key, data[key]);
+        }
+        alert("Erfolgreich importiert! Die App wird neu geladen.");
+        location.reload();
+    } catch(e) {
+        alert("Fehler beim Importieren. Der Code scheint ungültig zu sein.");
+    }
+}
+
 window.handleMCAnswer = function(btn, selectedVal, targetAns) {
     if (!isTrainingActive) return;
     const allBtns = document.querySelectorAll('.mc-btn');
@@ -553,6 +620,16 @@ function renderPackages() {
             renderPackages();
         };
         packagesContainer.appendChild(backBtn);
+        
+        if (currentCategory === 'LRS') {
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn-primary';
+            addBtn.style.gridColumn = '1 / -1';
+            addBtn.style.marginBottom = '24px';
+            addBtn.innerHTML = '+ Eigene Stolper-Wörter hinzufügen';
+            addBtn.onclick = () => showScreen('custom-deutsch');
+            packagesContainer.appendChild(addBtn);
+        }
     }
     
     let activePackages = currentSubject === 'deutsch' ? wordPackages : (currentSubject === 'mathe' ? mathPackages : englishPackages);
@@ -619,15 +696,21 @@ function renderPackages() {
             ${statsHtml}
         `;
         
-        if (currentSubject === 'englisch') {
+        if (currentSubject === 'englisch' || pkg.id.startsWith('custom_de_')) {
             const delBtn = document.createElement('button');
             delBtn.className = 'btn-delete';
             delBtn.innerHTML = '🗑️';
             delBtn.onclick = (e) => {
                 e.stopPropagation();
-                if (confirm('Vokabelliste wirklich löschen?')) {
-                    englishPackages = englishPackages.filter(p => p.id !== pkg.id);
-                    localStorage.setItem('custom_english_packages', JSON.stringify(englishPackages));
+                if (confirm('Liste wirklich löschen?')) {
+                    if (currentSubject === 'englisch') {
+                        englishPackages = englishPackages.filter(p => p.id !== pkg.id);
+                        localStorage.setItem('custom_english_packages', JSON.stringify(englishPackages));
+                    } else {
+                        customDePackages = customDePackages.filter(p => p.id !== pkg.id);
+                        localStorage.setItem('custom_de_packages', JSON.stringify(customDePackages));
+                        wordPackages = wordPackages.filter(p => p.id !== pkg.id);
+                    }
                     renderPackages();
                 }
             };
