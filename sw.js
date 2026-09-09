@@ -1,4 +1,4 @@
-const CACHE_NAME = 'blitzlesen-cache-v34';
+const CACHE_NAME = 'blitzlesen-cache-v35';
 const urlsToCache = [
   './',
   './index.html',

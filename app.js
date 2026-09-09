@@ -20,6 +20,30 @@ const wordPackages = [
     { id: 'paket_stolper_sp', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (Sp)', words: ['Spin|ne', 'Spa|ten', 'spu|cken', 'spie|len', 'Spaß', 'spät'] },
     { id: 'paket_stolper_st', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (St)', words: ['Stein', 'Sta|chel', 'Stuhl', 'ste|hen', 'stark', 'Staub'] },
     { id: 'paket_stolper_sch', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (Sch)', words: ['Schuh', 'Schlan|ge', 'schnell', 'schön', 'schla|fen', 'Schu|le', 'Schnee', 'schwarz'] },
+    { id: 'paket_lrs_silbenband', category: 'LRS', level: 'Me|tho|de', title: 'Sil|ben-Fließ|band', words: ['Ra|ke|te', 'Kro|ko|dil', 'To|ma|te', 'Scho|ko|la|de', 'Ba|na|ne', 'Lo|ko|mo|ti|ve', 'Te|le|fon'] },
+    { id: 'paket_lrs_alien', category: 'LRS', level: 'Me|tho|de', title: 'A|li|en-Wör|ter', words: ['Mupf', 'Lo|ma|tor', 'Schrip|pe', 'Pra|lu', 'Fa|sel', 'Römp', 'Klu|ba', 'Flu|pel', 'Zar|pel'] },
+    { id: 'paket_lrs_zwillinge', category: 'LRS', level: 'Me|tho|de', title: 'Wort-Zwil|lin|ge', items: [
+        { q: 'Hund', a: 'Hand' },
+        { q: 'wo', a: 'von' },
+        { q: 'kalt', a: 'klein' },
+        { q: 'bellen', a: 'Bälle' },
+        { q: 'viel', a: 'fiel' },
+        { q: 'Haus', a: 'Maus' },
+        { q: 'braucht', a: 'Bauch' },
+        { q: 'wird', a: 'wir' },
+        { q: 'Kind', a: 'Rind' },
+        { q: 'sind', a: 'Sand' }
+    ]},
+    { id: 'paket_lrs_luecken', category: 'LRS', level: 'Me|tho|de', title: 'Buch|sta|ben|dieb', items: [
+        { q: 'Sch_le', a: 'Schule' },
+        { q: 'Sp_ele', a: 'Spiele' },
+        { q: 'B_ume', a: 'Bäume' },
+        { q: 'K_tze', a: 'Katze' },
+        { q: 'H_nd', a: 'Hund' },
+        { q: 'L_mp_', a: 'Lampe' },
+        { q: 'F_hrr_d', a: 'Fahrrad' },
+        { q: 'W_sser', a: 'Wasser' }
+    ]},
     { id: 'paket_lesetexte', category: 'Geschichten', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
 
@@ -848,10 +872,14 @@ function startTraining(packageId) {
 
     if (currentSubject === 'deutsch') {
         let pkg = wordPackages.find(p => p.id === packageId);
-        currentPackage = { ...pkg, words: [...pkg.words] };
-        for (let i = currentPackage.words.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [currentPackage.words[i], currentPackage.words[j]] = [currentPackage.words[j], currentPackage.words[i]];
+        currentPackage = { ...pkg, words: pkg.words ? [...pkg.words] : undefined, items: pkg.items ? [...pkg.items] : undefined };
+        
+        let arr = currentPackage.words || currentPackage.items;
+        if (arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
         }
     } else if (currentSubject === 'mathe') {
         // Bei Mathe mischen wir das Profi Paket und Ergänzen immer neu, wenn es aufgerufen wird.
@@ -892,6 +920,16 @@ function startTraining(packageId) {
         if (radio.checked) currentInputMode = radio.value;
     }
     
+    // Force modes for special LRS packages
+    if (currentSubject === 'deutsch') {
+        if (packageId === 'paket_lrs_zwillinge') {
+            currentInputMode = 'mc';
+            isMultipleChoice = true;
+        } else if (packageId === 'paket_lrs_alien') {
+            currentInputMode = 'manual';
+        }
+    }
+    
     if (currentSubject === 'mathe') {
         document.getElementById('math-answer-input').setAttribute('inputmode', 'numeric');
         document.getElementById('math-answer-input').setAttribute('pattern', '[0-9]*');
@@ -921,6 +959,11 @@ function startTraining(packageId) {
         if (manualArea) manualArea.style.display = 'none';
         if (keyboardArea) keyboardArea.style.display = 'block';
         try { recognition.stop(); } catch(e) {}
+    } else if (currentInputMode === 'mc') {
+        if (micArea) micArea.style.display = 'none';
+        if (manualArea) manualArea.style.display = 'none';
+        if (keyboardArea) keyboardArea.style.display = 'none';
+        try { recognition.stop(); } catch(e) {}
     }
     
     showScreen('training');
@@ -946,18 +989,71 @@ function showWord() {
 
     if (wordIndex < listLen) {
         if (currentSubject === 'deutsch') {
-            let displayWord = currentPackage.words[wordIndex];
-            if (useSyllableColors) {
-                currentWordEl.innerHTML = colorizeSyllables(displayWord);
+            if (currentPackage.id === 'paket_lrs_zwillinge') {
+                const item = currentPackage.items[wordIndex];
+                currentWordEl.innerHTML = '<span style="font-size:0.5em">🔊 Hör gut zu!</span>';
+                
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(item.q);
+                    utterance.lang = 'de-DE';
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                }
+                
+                if (mcGrid) {
+                    mcGrid.style.display = 'grid';
+                    let options = [item.q, item.a];
+                    options.sort(() => 0.5 - Math.random());
+                    
+                    mcGrid.innerHTML = '';
+                    options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'mc-btn';
+                        btn.textContent = opt;
+                        btn.onclick = () => handleMCAnswer(btn, opt, item.q);
+                        mcGrid.appendChild(btn);
+                    });
+                }
+                currentWordStartTime = Date.now();
+                return;
+            } else if (currentPackage.id === 'paket_lrs_luecken') {
+                let displayWord = currentPackage.items[wordIndex].q;
+                currentWordEl.textContent = displayWord;
             } else {
-                currentWordEl.textContent = displayWord.replace(/\|/g, '');
-            }
-            
-            clearTimeout(blitzTimeout);
-            if (useBlitzlicht) {
-                blitzTimeout = setTimeout(() => {
-                    if (isTrainingActive) currentWordEl.innerHTML = '👁️';
-                }, 1000);
+                let displayWord = currentPackage.words[wordIndex];
+                
+                if (currentPackage.id === 'paket_lrs_silbenband') {
+                    if (window.silbenTimeout) clearTimeout(window.silbenTimeout);
+                    let syllables = displayWord.split('|');
+                    let currentDisplay = '';
+                    currentWordEl.innerHTML = '';
+                    
+                    const showNextSyllable = (i) => {
+                        if (i < syllables.length) {
+                            currentDisplay += `<span class="s${(i % 2) + 1}">${syllables[i]}</span>`;
+                            currentWordEl.innerHTML = currentDisplay;
+                            window.silbenTimeout = setTimeout(() => showNextSyllable(i+1), 800);
+                        } else {
+                            window.silbenTimeout = setTimeout(() => {
+                               currentWordEl.innerHTML = displayWord.replace(/\|/g, ''); 
+                            }, 800);
+                        }
+                    };
+                    showNextSyllable(0);
+                } else {
+                    if (useSyllableColors) {
+                        currentWordEl.innerHTML = colorizeSyllables(displayWord);
+                    } else {
+                        currentWordEl.textContent = displayWord.replace(/\|/g, '');
+                    }
+                    
+                    clearTimeout(blitzTimeout);
+                    if (useBlitzlicht && currentPackage.id !== 'paket_lrs_alien') {
+                        blitzTimeout = setTimeout(() => {
+                            if (isTrainingActive) currentWordEl.innerHTML = '👁️';
+                        }, 1000);
+                    }
+                }
             }
             
             if (currentInputMode === 'mic' && micStatus) {
@@ -1046,11 +1142,32 @@ function showWord() {
 }
 
 
+let showingSolution = false;
+
 function nextWord(wasCrash = false) {
+    if (currentSubject === 'deutsch' && currentPackage.id === 'paket_lrs_luecken' && !showingSolution) {
+        showingSolution = true;
+        currentWordEl.textContent = currentPackage.items[wordIndex].a;
+        currentWordEl.style.color = '#10B981'; // Green text to indicate success
+        setTimeout(() => {
+            showingSolution = false;
+            currentWordEl.style.color = '';
+            nextWord(wasCrash);
+        }, 1000);
+        return;
+    }
+    
     if (currentSubject === 'deutsch') {
         const durationMs = Date.now() - currentWordStartTime;
         const durationSec = durationMs / 1000;
-        const targetWord = currentPackage.words[wordIndex];
+        
+        let targetWord = '';
+        if (currentPackage.items) {
+            targetWord = currentPackage.items[wordIndex].q;
+        } else {
+            targetWord = currentPackage.words[wordIndex];
+        }
+        
         const cleanWord = targetWord.replace(/\|/g, '');
         const wordSpb = durationSec / cleanWord.length;
         
@@ -1067,7 +1184,8 @@ function nextWord(wasCrash = false) {
             if (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein') {
                 currentPackage.words.push(currentPackage.words[wordIndex]);
             } else if (currentPackage.id.startsWith('paket_stolper')) {
-                currentPackage.words.push(targetWord);
+                if (currentPackage.items) currentPackage.items.push(currentPackage.items[wordIndex]);
+                else currentPackage.words.push(targetWord);
                 if (!failedTasks.some(t => t.q === targetWord)) {
                     failedTasks.push({ q: targetWord, a: '' });
                 }
@@ -1081,7 +1199,7 @@ function nextWord(wasCrash = false) {
 }
 
 function updateProgressBar() {
-    const listLen = currentSubject === 'deutsch' ? currentPackage.words.length : currentPackage.items.length;
+    const listLen = currentPackage.words ? currentPackage.words.length : currentPackage.items.length;
     const percent = (wordIndex / listLen) * 100;
     progressBar.style.width = `${percent}%`;
 }
@@ -1102,7 +1220,12 @@ function finishTraining() {
     
     let spb = 0;
     if (currentSubject === 'deutsch') {
-        const totalLetters = currentPackage.words.reduce((sum, word) => sum + word.length, 0);
+        let totalLetters = 0;
+        if (currentPackage.words) {
+            totalLetters = currentPackage.words.reduce((sum, word) => sum + word.length, 0);
+        } else if (currentPackage.items) {
+            totalLetters = currentPackage.items.reduce((sum, item) => sum + item.a.length, 0);
+        }
         spb = totalSeconds / totalLetters;
     }
     
