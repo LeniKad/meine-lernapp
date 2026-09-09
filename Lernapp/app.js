@@ -1,24 +1,26 @@
 // --- Data: Word Packages ---
 const wordPackages = [
-    { id: 'paket1', level: 'Ein|fach 1', title: 'Pa|ket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
-    { id: 'paket2', level: 'Ein|fach 2', title: 'Pa|ket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
-    { id: 'paket3', level: 'Mit|tel 1', title: 'Pa|ket 3', words: ['sich', 'ein', 'eine', 'aber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
-    { id: 'paket4', level: 'Mit|tel 2', title: 'Pa|ket 4', words: ['oder', 'sind', 'dann', 'um', 'doch', 'mehr', 'vor', 'zum', 'schon', 'wenn'] },
-    { id: 'paket5', level: 'Schwe|rer 1', title: 'Pa|ket 5', words: ['wie|der', 'im|mer', 'et|was', 'nichts', 'weil', 'jetzt', 'al|les', 'da|mit', 'selbst', 'durch'] },
-    { id: 'paket6', level: 'Schwe|rer 2', title: 'Pa|ket 6', words: ['die|ses', 'wer|den', 'kön|nen', 'ha|ben', 'ma|chen', 'sehr', 'ein|mal', 'heu|te', 'ganz', 'viel'] },
-    { id: 'paket7', level: 'Pro|no|men 1', title: 'Pa|ket 7', words: ['sein', 'sei|ne', 'ihr', 'ihre', 'mein', 'mei|ne', 'dein', 'dei|ne', 'ihm', 'ihn'] },
-    { id: 'paket8', level: 'Pro|no|men 2', title: 'Pa|ket 8', words: ['un|ser', 'un|se|re', 'euch', 'mich', 'dich', 'uns', 'man', 'wer', 'wo', 'wann'] },
-    { id: 'paket9', level: 'Pro|fi 1', title: 'Pa|ket 9', words: ['ge|hen', 'ste|hen', 'se|hen', 'ohne', 'sehr', 'mehr', 'ihn', 'ih|nen', 'fah|ren', 'Jahr'] },
-    { id: 'paket10', level: 'Pro|fi 2', title: 'Pa|ket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
-    { id: 'paket11', level: 'Pro|fi 3', title: 'Pa|ket 11', words: ['des|halb', 'trotz|dem', 'nach|dem', 'be|vor', 'dar|um', 'da|vor', 'da|nach', 'da|bei', 'wie|so', 'war|um'] },
-    { id: 'paket12', level: 'Spe|zi|al', title: 'Pa|ket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'war|um', 'wie|so', 'wes|halb', 'wo|hin', 'wo|her'] },
-    { id: 'paket_abc_gross', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
-    { id: 'paket_abc_klein', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
-    { id: 'paket_huerdenlauf', level: 'Spiel', title: 'Hür|den|lauf (ABC)', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
-    { id: 'paket_huerdenlauf_schwer', level: 'Spiel', title: 'Hür|den|lauf (Schwer)', words: ['W', 'w', 'P', 'p', 'H', 'h', 'K', 'k', 'Sp', 'sp', 'St', 'st', 'Sch', 'sch'] },
-    { id: 'paket_stolpersteine', level: 'Spe|zi|al', title: 'Stol|per|steine', words: ['Spin|ne', 'Stein', 'Schuh', 'Kro|ko|dil', 'Haus', 'Wel|len', 'Pin|guin', 'Spu|cken', 'Sta|chel', 'Schlan|ge', 'Hals', 'Was|ser', 'Kat|ze', 'klein', 'kalt', 'kom|men', 'Hund', 'hoch', 'hel|fen', 'Spa|ten'] },
-    { id: 'paket_stolper_buchstaben', level: 'Spe|zi|al', title: 'Stol|per (Buch|sta|ben)', words: ['W', 'w', 'H', 'h', 'K', 'k', 'Sp', 'Sch', 'sch', 'St', 'st'] },
-    { id: 'paket_lesetexte', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
+    { id: 'paket1', category: 'Wortpakete', level: 'Ein|fach 1', title: 'Pa|ket 1', words: ['und', 'in', 'zu', 'der', 'die', 'das', 'er', 'sie', 'es', 'auf'] },
+    { id: 'paket2', category: 'Wortpakete', level: 'Ein|fach 2', title: 'Pa|ket 2', words: ['mit', 'von', 'ist', 'im', 'an', 'für', 'was', 'wie', 'wir', 'aus'] },
+    { id: 'paket3', category: 'Wortpakete', level: 'Mit|tel 1', title: 'Pa|ket 3', words: ['sich', 'ein', 'ei|ne', 'a|ber', 'auch', 'als', 'bei', 'noch', 'nur', 'so'] },
+    { id: 'paket4', category: 'Wortpakete', level: 'Mit|tel 2', title: 'Pa|ket 4', words: ['o|der', 'sind', 'dann', 'um', 'doch', 'mehr', 'vor', 'zum', 'schon', 'wenn'] },
+    { id: 'paket5', category: 'Wortpakete', level: 'Schwe|rer 1', title: 'Pa|ket 5', words: ['wie|der', 'im|mer', 'et|was', 'nichts', 'weil', 'jetzt', 'al|les', 'da|mit', 'selbst', 'durch'] },
+    { id: 'paket6', category: 'Wortpakete', level: 'Schwe|rer 2', title: 'Pa|ket 6', words: ['die|ses', 'wer|den', 'kön|nen', 'ha|ben', 'ma|chen', 'sehr', 'ein|mal', 'heu|te', 'ganz', 'viel'] },
+    { id: 'paket7', category: 'Wortpakete', level: 'Pro|no|men 1', title: 'Pa|ket 7', words: ['sein', 'sei|ne', 'ihr', 'ih|re', 'mein', 'mei|ne', 'dein', 'dei|ne', 'ihm', 'ihn'] },
+    { id: 'paket8', category: 'Wortpakete', level: 'Pro|no|men 2', title: 'Pa|ket 8', words: ['un|ser', 'un|se|re', 'euch', 'mich', 'dich', 'uns', 'man', 'wer', 'wo', 'wann'] },
+    { id: 'paket9', category: 'Wortpakete', level: 'Pro|fi 1', title: 'Pa|ket 9', words: ['ge|hen', 'ste|hen', 'se|hen', 'oh|ne', 'sehr', 'mehr', 'ihn', 'ih|nen', 'fah|ren', 'Jahr'] },
+    { id: 'paket10', category: 'Wortpakete', level: 'Pro|fi 2', title: 'Pa|ket 10', words: ['dann', 'denn', 'wenn', 'dass', 'muss', 'voll', 'soll', 'will', 'kann', 'Herr'] },
+    { id: 'paket11', category: 'Wortpakete', level: 'Pro|fi 3', title: 'Pa|ket 11', words: ['des|halb', 'trotz|dem', 'nach|dem', 'be|vor', 'dar|um', 'da|vor', 'da|nach', 'da|bei', 'wie|so', 'war|um'] },
+    { id: 'paket12', category: 'Wortpakete', level: 'Spe|zi|al', title: 'Pa|ket 12', words: ['wie', 'was', 'wer', 'wo', 'wann', 'war|um', 'wie|so', 'wes|halb', 'wo|hin', 'wo|her'] },
+    { id: 'paket_abc_gross', category: 'LRS', level: 'ABC', title: 'Groß|buch|sta|ben', words: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ü'] },
+    { id: 'paket_abc_klein', category: 'LRS', level: 'abc', title: 'Klein|buch|sta|ben', words: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü'] },
+    { id: 'paket_stolper_buchstaben', category: 'LRS', level: 'Spe|zi|al', title: 'Buch|sta|ben (H/K/W/P...)', words: ['W', 'w', 'P', 'p', 'H', 'h', 'K', 'k', 'Sp', 'sp', 'Sch', 'sch', 'St', 'st'] },
+    { id: 'paket_stolper_h', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (H)', words: ['Haus', 'Hund', 'hoch', 'hel|fen', 'Hals', 'Haar', 'Hand', 'heis|se'] },
+    { id: 'paket_stolper_k', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (K)', words: ['Kro|ko|dil', 'Kat|ze', 'klein', 'kalt', 'kom|men', 'Kopf', 'Kä|fer', 'Kind'] },
+    { id: 'paket_stolper_sp', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (Sp)', words: ['Spin|ne', 'Spa|ten', 'spu|cken', 'spie|len', 'Spaß', 'spät'] },
+    { id: 'paket_stolper_st', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (St)', words: ['Stein', 'Sta|chel', 'Stuhl', 'ste|hen', 'stark', 'Staub'] },
+    { id: 'paket_stolper_sch', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (Sch)', words: ['Schuh', 'Schlan|ge', 'schnell', 'schön', 'schla|fen', 'Schu|le', 'Schnee', 'schwarz'] },
+    { id: 'paket_lesetexte', category: 'Geschichten', level: 'Le|sen', title: 'Tier-Aben|teu|er', words: [] }
 ];
 
 const letterDictionary = {
@@ -29,15 +31,15 @@ const letterDictionary = {
     'E': ['🐘 Elefant', '🍓 Erdbeere', '🦆 Ente'],
     'F': ['🐟 Fisch', '🐸 Frosch', '🦊 Fuchs'],
     'G': ['🦒 Giraffe', '🎸 Gitarre', '🎁 Geschenk'],
-    'H': ['🏠 Haus (Leiter)', '🦒 Hals', '🐶 Hund'],
+    'H': ['🏠 Haus', '🐶 Hund', '✋ Hand'],
     'I': ['🦔 Igel', '🏝️ Insel', '💡 Idee'],
     'J': ['🐆 Jaguar', '👖 Jeans', '🪀 Jojo'],
-    'K': ['🐊 Krokodil (offenes Maul)', '👑 Krone', '🐱 Katze'],
+    'K': ['🐊 Krokodil', '👑 Krone', '🐱 Katze'],
     'L': ['🦁 Löwe', '🍭 Lutscher', '🪜 Leiter'],
     'M': ['🐭 Maus', '🌙 Mond', '🏍️ Motorrad'],
     'N': ['🦛 Nashorn', '🍝 Nudeln', '🥜 Nuss'],
     'O': ['🐙 Oktopus', '🍊 Orange', '👂 Ohr'],
-    'P': ['🎈 Pusten', '🐧 Pinguin', '🍕 Pizza'],
+    'P': ['🐧 Pinguin', '🍕 Pizza', '🍄 Pilz'],
     'Q': ['🪼 Qualle', '🐸 Quak', '⬜ Quadrat'],
     'R': ['🚀 Rakete', '🌹 Rose', '🌧️ Regen'],
     'S': ['☀️ Sonne', '🚢 Schiff', '🐍 Schlange'],
@@ -53,32 +55,50 @@ const letterDictionary = {
     'Ü': ['🎁 Überraschung'],
     'SP': ['⛏️ Spaten', '🕷️ Spinne', '👻 Spuk'],
     'ST': ['🪨 Stein', '🌵 Stachel', '🌟 Stern'],
-    'SCH': ['🐍 Schlange', '🚂 Lokomotive (Sch-sch-sch)', '👞 Schuh']
+    'SCH': ['✂️ Schere', '🎒 Schule', '🐍 Schlange']
 };
 
 const wordDictionary = {
-    'spinne': '🕷️ Spinne',
-    'stein': '🪨 Stein',
-    'schuh': '👞 Schuh',
-    'krokodil': '🐊 Krokodil',
     'haus': '🏠 Haus',
+    'hund': '🐶 Hund',
+    'hoch': '⬆️ hoch',
+    'helfen': '🤝 helfen',
+    'hals': '🦒 Hals',
+    'haar': '💇 Haar',
+    'hand': '✋ Hand',
+    'heisse': '🔥 heiße',
+    'krokodil': '🐊 Krokodil',
+    'katze': '🐱 Katze',
+    'klein': '🐜 klein',
+    'kalt': '❄️ kalt',
+    'kommen': '🚶 kommen',
+    'kopf': '🗣️ Kopf',
+    'käfer': '🐞 Käfer',
+    'kind': '🧒 Kind',
+    'spinne': '🕷️ Spinne',
+    'spaten': '⛏️ Spaten',
+    'spucken': '💦 spucken',
+    'spielen': '🎲 spielen',
+    'spaß': '🥳 Spaß',
+    'spät': '⏰ spät',
+    'stein': '🪨 Stein',
+    'stachel': '🌵 Stachel',
+    'stuhl': '🪑 Stuhl',
+    'stehen': '🧍 stehen',
+    'stark': '💪 stark',
+    'staub': '🧹 Staub',
+    'schuh': '👞 Schuh',
+    'schlange': '🐍 Schlange',
+    'schnell': '🏎️ schnell',
+    'schön': '✨ schön',
+    'schlafen': '😴 schlafen',
+    'schule': '🎒 Schule',
+    'schnee': '⛄ Schnee',
+    'schwarz': '⬛ schwarz',
     'wellen': '🌊 Wellen',
     'pinguin': '🐧 Pinguin',
-    'spucken': '💦 Spucken',
-    'stachel': '🌵 Stachel',
-    'schlange': '🐍 Schlange',
-    'hals': '🦒 Hals',
-    'wasser': '💧 Wasser',
-    'katze': '🐱 Katze',
-    'klein': '🤏 klein',
-    'kalt': '🧊 kalt',
-    'kommen': '🚶 kommen',
-    'hund': '🐶 Hund',
-    'hoch': '🏔️ hoch',
-    'helfen': '🤝 helfen',
-    'spaten': '⛏️ Spaten'
+    'wasser': '💧 Wasser'
 };
-
 function generateMathPackages() {
     const packages = [];
     for (let logic = 1; logic <= 10; logic++) {
@@ -469,6 +489,14 @@ function renderPackages() {
     packagesContainer.innerHTML = '';
     const activePackages = currentSubject === 'deutsch' ? wordPackages : (currentSubject === 'mathe' ? mathPackages : englishPackages);
     
+    // Create fragments for categories
+    const categories = {
+        'Wortpakete': document.createDocumentFragment(),
+        'LRS': document.createDocumentFragment(),
+        'Geschichten': document.createDocumentFragment(),
+        'default': document.createDocumentFragment()
+    };
+    
     activePackages.forEach(pkg => {
         const bestDataRaw = localStorage.getItem(`blitzlesen_${pkg.id}`);
         let statsHtml = '';
@@ -521,9 +549,55 @@ function renderPackages() {
             ${statsHtml}
         `;
         
-        card.addEventListener('click', () => startTraining(pkg.id));
-        packagesContainer.appendChild(card);
+        if (currentSubject === 'englisch') {
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn-delete';
+            delBtn.innerHTML = '🗑️';
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (confirm('Vokabelliste wirklich löschen?')) {
+                    englishPackages = englishPackages.filter(p => p.id !== pkg.id);
+                    localStorage.setItem('custom_english_packages', JSON.stringify(englishPackages));
+                    renderPackages();
+                }
+            };
+            card.appendChild(delBtn);
+        }
+        
+        card.onclick = () => startTraining(pkg.id);
+        
+        if (currentSubject === 'deutsch' && pkg.category && categories[pkg.category]) {
+            categories[pkg.category].appendChild(card);
+        } else {
+            categories['default'].appendChild(card);
+        }
     });
+
+    if (currentSubject === 'deutsch') {
+        if (categories['Wortpakete'].childNodes.length > 0) {
+            const header = document.createElement('h2');
+            header.style.cssText = 'grid-column: 1 / -1; margin-top: 10px; color: var(--primary); font-size: 1.5rem;';
+            header.textContent = '📁 Grundwortschatz';
+            packagesContainer.appendChild(header);
+            packagesContainer.appendChild(categories['Wortpakete']);
+        }
+        if (categories['LRS'].childNodes.length > 0) {
+            const header = document.createElement('h2');
+            header.style.cssText = 'grid-column: 1 / -1; margin-top: 20px; color: #EF4444; font-size: 1.5rem; border-top: 2px dashed #FECACA; padding-top: 20px;';
+            header.textContent = '🧩 LRS & Stolpersteine';
+            packagesContainer.appendChild(header);
+            packagesContainer.appendChild(categories['LRS']);
+        }
+        if (categories['Geschichten'].childNodes.length > 0) {
+            const header = document.createElement('h2');
+            header.style.cssText = 'grid-column: 1 / -1; margin-top: 20px; color: #10B981; font-size: 1.5rem; border-top: 2px dashed #A7F3D0; padding-top: 20px;';
+            header.textContent = '📖 Geschichten';
+            packagesContainer.appendChild(header);
+            packagesContainer.appendChild(categories['Geschichten']);
+        }
+    } else {
+        packagesContainer.appendChild(categories['default']);
+    }
 }
 
 // --- Reading Mode Logic ---
@@ -881,16 +955,6 @@ function showWord() {
                 micStatus.textContent = "🎙️ Hör zu...";
             }
             
-            const hurdleTrack = document.getElementById('hurdle-track');
-            if (hurdleTrack) {
-                if (currentPackage.id.startsWith('paket_huerdenlauf')) {
-                    hurdleTrack.style.display = 'block';
-                    resetHurdle();
-                } else {
-                    hurdleTrack.style.display = 'none';
-                    clearTimeout(window.hurdleTimeout);
-                }
-            }
         } else if (currentSubject === 'mathe') {
             let questionText = currentPackage.items[wordIndex].q;
             const learnToggle = document.getElementById('math-learn-toggle');
@@ -972,85 +1036,6 @@ function showWord() {
     }
 }
 
-window.hurdleTimeout = null;
-window.hurdleResolved = false;
-
-function resetHurdle() {
-    window.hurdleResolved = false;
-    clearTimeout(window.hurdleTimeout);
-    const runner = document.getElementById('hurdle-runner');
-    const obstacle = document.getElementById('hurdle-obstacle');
-    if (!runner || !obstacle) return;
-    
-    runner.style.transition = 'none';
-    runner.style.left = '10px';
-    runner.style.bottom = '-5px';
-    runner.style.transform = 'none';
-    
-    obstacle.style.transition = 'none';
-    obstacle.style.transform = 'none';
-    
-    // Start running after a tiny delay to ensure CSS applies
-    setTimeout(() => {
-        if (!isTrainingActive || !currentPackage.id.startsWith('paket_huerdenlauf')) return;
-        runner.style.transition = 'left 2.5s linear';
-        runner.style.left = 'calc(100% - 90px)'; // Reach hurdle
-        
-        window.hurdleTimeout = setTimeout(() => {
-            if (!window.hurdleResolved) triggerHurdleCrash();
-        }, 2500);
-    }, 50);
-}
-
-function triggerHurdleJump() {
-    if (window.hurdleResolved) return;
-    window.hurdleResolved = true;
-    clearTimeout(window.hurdleTimeout);
-    
-    const runner = document.getElementById('hurdle-runner');
-    if (!runner) return;
-    
-    runner.style.transition = 'left 0.8s linear, bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) alternate 2';
-    runner.style.left = 'calc(100% + 50px)'; // Run off screen
-    runner.style.bottom = '60px'; // Peak of jump
-    
-    setTimeout(() => {
-        if (runner) runner.style.bottom = '-5px'; // Land
-    }, 400);
-
-    setTimeout(() => {
-        nextWord(false);
-    }, 800);
-}
-
-function triggerHurdleCrash() {
-    if (window.hurdleResolved) return;
-    window.hurdleResolved = true;
-    clearTimeout(window.hurdleTimeout);
-    
-    const runner = document.getElementById('hurdle-runner');
-    const obstacle = document.getElementById('hurdle-obstacle');
-    if (runner) {
-        runner.style.transition = 'transform 0.3s, bottom 0.3s';
-        runner.style.transform = 'rotate(70deg)';
-        runner.style.bottom = '-15px';
-    }
-    if (obstacle) {
-        obstacle.style.transition = 'transform 0.3s';
-        obstacle.style.transformOrigin = 'bottom right';
-        obstacle.style.transform = 'rotate(90deg)';
-    }
-    
-    const targetWord = currentPackage.words[wordIndex];
-    if (!failedTasks.some(t => t.q === targetWord)) {
-        failedTasks.push({ q: targetWord, a: '' });
-    }
-    currentPackage.words.push(targetWord);
-    
-    setTimeout(() => {
-        nextWord(true); // true = skip pushing again
-    }, 1200);
-}
 
 function nextWord(wasCrash = false) {
     if (currentSubject === 'deutsch') {
