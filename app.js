@@ -888,6 +888,18 @@ function startTraining(packageId) {
 
     if (currentSubject === 'deutsch') {
         let pkg = wordPackages.find(p => p.id === packageId);
+        
+        if (packageId === 'paket_lrs_alien') {
+            const prefixes = ['Mu', 'Lo', 'Schri', 'Pra', 'Fa', 'Rö', 'Klu', 'Flu', 'Zar', 'Plo', 'Kri', 'Twa', 'Schnu', 'Gro', 'Trom', 'Quam', 'Fli', 'Bra', 'Schna', 'Pfi', 'Schlo'];
+            const suffixes = ['pf', 'ma|tor', 'ppe', 'lu', 'sel', 'mp', 'ba', 'pel', 'tel', 'f', 'xo', 'zen', 'tz', 'sch', 'gel', 'ka', 'po', 'tusch', 'bel', 'mel'];
+            pkg.words = [];
+            for(let i=0; i<12; i++) {
+                let pre = prefixes[Math.floor(Math.random() * prefixes.length)];
+                let suf = suffixes[Math.floor(Math.random() * suffixes.length)];
+                pkg.words.push(pre + '|' + suf);
+            }
+        }
+        
         currentPackage = { ...pkg, words: pkg.words ? [...pkg.words] : undefined, items: pkg.items ? [...pkg.items] : undefined };
         
         let arr = currentPackage.words || currentPackage.items;
@@ -1149,11 +1161,6 @@ function nextWord(wasCrash = false) {
         showingSolution = true;
         currentWordEl.textContent = currentPackage.items[wordIndex].a;
         currentWordEl.style.color = '#10B981'; // Green
-        setTimeout(() => {
-            showingSolution = false;
-            currentWordEl.style.color = '';
-            nextWord(wasCrash);
-        }, 2000);
         return;
     }
     
