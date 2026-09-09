@@ -581,7 +581,11 @@ function renderPackages() {
         
         let previewTxt = '';
         if(currentSubject === 'deutsch'){
-            previewTxt = pkg.words.slice(0, 3).join(', ').replace(/\|/g, '') + '...';
+            if (pkg.words) {
+                previewTxt = pkg.words.slice(0, 3).join(', ').replace(/\|/g, '') + '...';
+            } else if (pkg.items) {
+                previewTxt = pkg.items.slice(0, 3).map(i => i.q.replace(/_/g, '')).join(', ') + '...';
+            }
         } else if(currentSubject === 'mathe') {
             previewTxt = pkg.items.slice(0, 3).map(i => i.q.replace(' = ','')).join(', ') + '...';
         } else {
