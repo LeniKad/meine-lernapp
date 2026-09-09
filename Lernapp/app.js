@@ -812,7 +812,12 @@ function setupSpeechRecognition() {
         }
         
         if (currentSubject === 'deutsch') {
-            let targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
+            let targetWord = '';
+            if (currentPackage.items) {
+                targetWord = currentPackage.items[wordIndex].a.toLowerCase(); // Compare with answer
+            } else {
+                targetWord = currentPackage.words[wordIndex].toLowerCase().replace(/\|/g, '');
+            }
             let isCorrect = combinedTranscript.includes(targetWord);
             
             if (currentPackage.id === 'paket_krokodil') {
@@ -978,7 +983,7 @@ function startTraining(packageId) {
 }
 
 function showWord() {
-    const listLen = currentSubject === 'deutsch' ? currentPackage.words.length : currentPackage.items.length;
+    const listLen = currentPackage.words ? currentPackage.words.length : currentPackage.items.length;
     const mathVis = document.getElementById('math-visualization');
     const mcGrid = document.getElementById('mc-options-grid');
     if (mathVis) {
