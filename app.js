@@ -481,35 +481,44 @@ window.exportData = function() {
             dataToExport[key] = localStorage.getItem(key);
         }
     }
-    const jsonStr = JSON.stringify(dataToExport);
-    const encoded = btoa(encodeURIComponent(jsonStr)); // Base64 for easier copy/pasting
+    const jsonStr = JSON.stringify(dataToExport, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
     
-    // Create a temporary textarea to copy from
-    const dummy = document.createElement("textarea");
-    document.body.appendChild(dummy);
-    dummy.value = encoded;
-    dummy.select();
-    document.execCommand("copy");
-    document.body.removeChild(dummy);
-    
-    alert("Export-Code wurde in die Zwischenablage kopiert! Schicke ihn dir selbst (z.B. per E-Mail oder WhatsApp) und füge ihn auf dem anderen Gerät bei 'Importieren' ein.");
+    const a = document.createElement('a');
+    a.href = url;
+    const dateStr = new Date().toISOString().split('T')[0];
+    a.download = `LernApp_Fortschritt_${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 window.importData = function() {
-    const code = prompt("Füge hier den Export-Code vom anderen Gerät ein:");
-    if (!code) return;
-    
-    try {
-        const jsonStr = decodeURIComponent(atob(code));
-        const data = JSON.parse(jsonStr);
-        for (const key in data) {
-            localStorage.setItem(key, data[key]);
-        }
-        alert("Erfolgreich importiert! Die App wird neu geladen.");
-        location.reload();
-    } catch(e) {
-        alert("Fehler beim Importieren. Der Code scheint ungültig zu sein.");
-    }
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const data = JSON.parse(event.target.result);
+                for (const key in data) {
+                    localStorage.setItem(key, data[key]);
+                }
+                alert("Erfolgreich importiert! Die App wird neu geladen.");
+                location.reload();
+            } catch(err) {
+                alert("Fehler beim Lesen der Datei. Ist es die richtige Sicherungs-Datei?");
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
 }
 
 window.handleMCAnswer = function(btn, selectedVal, targetAns) {
