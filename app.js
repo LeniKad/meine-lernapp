@@ -20,8 +20,8 @@ let wordPackages = [
     { id: 'paket_stolper_sp', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (Sp)', words: ['Spin|ne', 'Spa|ten', 'spu|cken', 'spie|len', 'Spaß', 'spät'] },
     { id: 'paket_stolper_st', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (St)', words: ['Stein', 'Sta|chel', 'Stuhl', 'ste|hen', 'stark', 'Staub'] },
     { id: 'paket_stolper_sch', category: 'LRS', level: 'Spe|zi|al', title: 'Stol|per|steine (Sch)', words: ['Schuh', 'Schlan|ge', 'schnell', 'schön', 'schla|fen', 'Schu|le', 'Schnee', 'schwarz'] },
+    { id: 'paket_stolper_mix', category: 'LRS', level: 'Spe|zi|al', title: 'Lau|te-Mix (Mit|te & An|fang)', words: ['Hund', 'Ha|se', 'se|hen', 'ge|hen', 'U|hu', 'Kat|ze', 'Pa|ket', 'Schau|kel', 'Ra|ke|te', 'Kro|ko|dil', 'Spin|ne', 'Sport', 'spie|len', 'Wes|pe', 'Knos|pe', 'Stein', 'Stern', 'stark', 'Kas|ten', 'Fens|ter', 'Post', 'Ast', 'Schu|le', 'schön', 'schnell', 'wa|schen', 'Ta|sche', 'Fla|sche', 'Tisch', 'Was|ser', 'Wol|ke', 'Lö|we', 'Mö|we', 'zwei'] },
     { id: 'paket_lrs_silbenband', category: 'LRS', level: 'Me|tho|de', title: 'Sil|ben-Fließ|band', words: ['Ra|ke|te', 'Kro|ko|dil', 'To|ma|te', 'Scho|ko|la|de', 'Ba|na|ne', 'Lo|ko|mo|ti|ve', 'Te|le|fon'] },
-    { id: 'paket_lrs_alien', category: 'LRS', level: 'Me|tho|de', title: 'A|li|en-Wör|ter', words: ['Mupf', 'Lo|ma|tor', 'Schrip|pe', 'Pra|lu', 'Fa|sel', 'Römp', 'Klu|ba', 'Flu|pel', 'Zar|pel'] },
     { id: 'paket_lrs_zwillinge', category: 'LRS', level: 'Me|tho|de', title: 'Wort-Zwil|lin|ge', items: [
         { q: 'Hund', a: 'Hand' },
         { q: 'wo', a: 'von' },
@@ -988,17 +988,7 @@ function startTraining(packageId) {
     if (currentSubject === 'deutsch') {
         let pkg = wordPackages.find(p => p.id === packageId);
         
-        if (packageId === 'paket_lrs_alien') {
-            const prefixes = ['Mu', 'Lo', 'Schri', 'Pra', 'Fa', 'Rö', 'Klu', 'Flu', 'Zar', 'Plo', 'Kri', 'Twa', 'Schnu', 'Gro', 'Trom', 'Quam', 'Fli', 'Bra', 'Schna', 'Pfi', 'Schlo'];
-            const suffixes = ['pf', 'ma|tor', 'ppe', 'lu', 'sel', 'mp', 'ba', 'pel', 'tel', 'f', 'xo', 'zen', 'tz', 'sch', 'gel', 'ka', 'po', 'tusch', 'bel', 'mel'];
-            pkg.words = [];
-            for(let i=0; i<12; i++) {
-                let pre = prefixes[Math.floor(Math.random() * prefixes.length)];
-                let suf = suffixes[Math.floor(Math.random() * suffixes.length)];
-                pkg.words.push(pre + '|' + suf);
-            }
-        }
-        
+
         currentPackage = { ...pkg, words: pkg.words ? [...pkg.words] : undefined, items: pkg.items ? [...pkg.items] : undefined };
         
         let arr = currentPackage.words || currentPackage.items;
@@ -1052,7 +1042,7 @@ function startTraining(packageId) {
         if (packageId === 'paket_lrs_zwillinge') {
             currentInputMode = 'mc';
             isMultipleChoice = true;
-        } else if (packageId === 'paket_lrs_alien' || packageId === 'paket_lrs_silbenband' || packageId === 'paket_lrs_luecken') {
+        } else if (packageId === 'paket_lrs_silbenband' || packageId === 'paket_lrs_luecken') {
             currentInputMode = 'manual';
         }
     }
@@ -1161,7 +1151,7 @@ function showWord() {
                     }
                     
                     clearTimeout(blitzTimeout);
-                    if (useBlitzlicht && currentPackage.id !== 'paket_lrs_alien') {
+                    if (useBlitzlicht) {
                         blitzTimeout = setTimeout(() => {
                             if (isTrainingActive) currentWordEl.innerHTML = '👁️';
                         }, 1000);
@@ -1308,12 +1298,9 @@ function nextWord(wasCrash = false) {
         if (durationMs > 2500) {
             if (currentPackage.id === 'paket_abc_gross' || currentPackage.id === 'paket_abc_klein') {
                 currentPackage.words.push(currentPackage.words[wordIndex]);
-            } else if (currentPackage.id.startsWith('paket_stolper')) {
-                if (currentPackage.items) currentPackage.items.push(currentPackage.items[wordIndex]);
-                else currentPackage.words.push(targetWord);
-                if (!failedTasks.some(t => t.q === targetWord)) {
-                    failedTasks.push({ q: targetWord, a: '' });
-                }
+            }
+            if (!failedTasks.some(t => t.q === targetWord)) {
+                failedTasks.push({ q: targetWord, a: '' });
             }
         }
     }
